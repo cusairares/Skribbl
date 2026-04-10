@@ -35,6 +35,6 @@ namespace Skribbl.Models
         }
 
         public int CurrentDrawerId { get; set; }
-        public bool IsStarted {  get; set; }
+        public bool IsStarted { get; set; }
     }
 }

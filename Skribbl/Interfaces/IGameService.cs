@@ -7,17 +7,20 @@ namespace Skribbl.Interfaces
 
 
         /// <summary>
-        /// Adds a player to the given roomId
+        /// Creates new GameState
         /// </summary>
-        /// <param name="roomId"></param>
-        /// <param name="player"></param>
-        /// <returns>If the connection was a success</returns>
-        bool JoinRoom(string roomId,Player player);
+        /// <returns>The RoomId</returns>
+        string CreateRoom();
 
         /// <summary>
-        /// Creates a private room and also adds the player
+        /// Joins specific room with player connectionId, also updates the dictionarys
         /// </summary>
-        void CreateRoom();
+        /// <param name="roomId"></param>
+        /// <param name="connectionId"></param>
+        /// <returns></returns>
+        bool JoinRoom(string roomId, Player player);
+
+        bool LeaveRoom(string connectionId);
 
         /// <summary>
         /// Returns the player with highest score
@@ -27,19 +30,12 @@ namespace Skribbl.Interfaces
         Player GetWinner(string roomId);
 
         /// <summary>
-        /// Update the score for a given player
+        /// Explictly adding points for a given player
         /// </summary>
         /// <param name="roomId"></param>
-        /// <param name="player"></param>
+        /// <param name="connectionId"></param>
         /// <param name="newScore"></param>
-        bool AddPoints(string roomId, Player player, int newScore);
-
-        /// <summary>
-        /// Get the next drawing from given room
-        /// </summary>
-        /// <param name="roomId"></param>
-        /// <returns></returns>
-        Player GetNextDrawer(string roomId);
+        bool AddPoints(string roomId, string connectionId, int newScore);
 
 
         /// <summary>

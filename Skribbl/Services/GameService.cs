@@ -12,31 +12,35 @@ namespace Skribbl.Services
             _gameManager = gameManager;
         }
 
-        public void CreateRoom()
+        public string CreateRoom()
         {
             var roomId = GenerateUniqueId();
-            var newState = new GameState(roomId);  
-            _gameManager.Save(newState);
+            var newState = new GameState(roomId);
+            _gameManager.AddRoom(newState);
+
+            return roomId;
         }
 
         private string GenerateUniqueId()
         {
             return Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
         }
-        
+
         public bool JoinRoom(string roomId, Player player)
         {
-            var room =  _gameManager.GetRoom(roomId);
+            var room = _gameManager.GetRoomByRoomId(roomId);
             if (room == null)
             {
                 return false;
             }
-            lock (room.Players)
-            {
-                room.Players.Add(player);
-            }
+            _gameManager.AddPlayerToRoom(roomId, player);
             return true;
 
+        }
+
+        public bool LeaveRoom(string connectionId)
+        {
+            return _gameManager.RemovePlayer(connectionId);
         }
 
         public Player GetWinner(string roomId)
@@ -46,17 +50,7 @@ namespace Skribbl.Services
 
         public bool AddPoints(string roomId, string connectionId, int newScore)
         {
-
-            var player = _gameManager.GetPlayer(roomId, connectionId);
-            if (player == null)
-            {
-                return false;
-            }
-            lock (player)
-            {
-                player.Score += newScore;
-            }
-            return true;
+            throw new NotImplementedException();
         }
 
         public Player GetNextDrawer(string roomId)
@@ -73,6 +67,5 @@ namespace Skribbl.Services
         {
             throw new NotImplementedException();
         }
-
     }
 }

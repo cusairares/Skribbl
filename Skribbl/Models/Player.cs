@@ -24,12 +24,7 @@
             set => _connectionId = value;
         }
 
-        public Player(string username, int score)
-        {
-            _username = username;
-            _score = score;
-        }
-
+        public Player() { }
 
     }
 }
