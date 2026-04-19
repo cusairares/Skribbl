@@ -16,9 +16,10 @@ namespace Skribbl.Interfaces
         /// Joins specific room with player connectionId, also updates the dictionarys
         /// </summary>
         /// <param name="roomId"></param>
+        /// <param name="username"></param>
         /// <param name="connectionId"></param>
         /// <returns></returns>
-        bool JoinRoom(string roomId, Player player);
+        bool JoinRoom(string roomId, string username, string connectionId);
 
         bool LeaveRoom(string connectionId);
 

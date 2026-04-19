@@ -72,6 +72,12 @@ namespace Skribbl.Models
             }
             lock (room.Players)
             {
+                var playerExisting = room.Players.FirstOrDefault(x => x.Username == player.Username);
+                if (playerExisting != null)
+                {
+                    room.Players.Remove(playerExisting);
+                }
+
                 room.Players.Add(player);
                 _connectionIdMap[player.ConnectionId] = roomId;
             }

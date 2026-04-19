@@ -26,13 +26,21 @@ namespace Skribbl.Services
             return Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
         }
 
-        public bool JoinRoom(string roomId, Player player)
+        public bool JoinRoom(string roomId, string username, string connectionId)
         {
             var room = _gameManager.GetRoomByRoomId(roomId);
             if (room == null)
             {
+                Console.WriteLine($"[DEBUG] Join failed: Room {roomId} not found.");
                 return false;
             }
+
+            if (string.IsNullOrEmpty(username))
+            {
+                Console.WriteLine("[DEBUG] Join failed: Username is null or empty.");
+                return false;
+            }
+            var player = new Player { Username = username, ConnectionId = connectionId ,Score = 0};
             _gameManager.AddPlayerToRoom(roomId, player);
             return true;
 

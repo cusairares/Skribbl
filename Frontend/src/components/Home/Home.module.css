@@ -1,0 +1,19 @@
+.wrapper{
+    width: 100%;
+    height: fit-content;
+    background-image: url("src/assets/background.png");
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+    
+}
+
+.logo{
+    width: 400px ;
+}
+.content{
+    row-gap: 20px;
+    display: flex;
+    flex-direction: column;
+}

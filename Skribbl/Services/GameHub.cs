@@ -12,14 +12,8 @@ namespace Skribbl.Services
 
         public async Task JoinRoom(string roomId, string username)
         {
-            var player = new Player
-            {
-                Username = username,
-                ConnectionId = Context.ConnectionId,
-                Score = 0,
-            };
 
-            var success = _gameService.JoinRoom(roomId, player);
+            var success = _gameService.JoinRoom(roomId, username,Context.ConnectionId);
 
             if (success)
             {
