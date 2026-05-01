@@ -21,12 +21,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IGameManager,GameManager>();
 builder.Services.AddSingleton<IGameService,GameService>();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options => {
+        options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 
 
 var app = builder.Build();
-
+    
 app.UseCors("VitePolicy");
 app.MapServiceEndpoints();
 

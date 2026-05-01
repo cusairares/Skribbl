@@ -7,7 +7,7 @@ namespace Skribbl.Endpoints
     {
         public record CreateRoomRequest(string Username);
 
-        public record JoinRoomRequest(string Username);
+        public record JoinRoomRequest(string Username,string ConnectionId);
         public static void MapServiceEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost("/api/rooms/create", (IGameService gameService) =>
@@ -16,9 +16,9 @@ namespace Skribbl.Endpoints
                 return Results.Ok(new { roomId });
             });
 
-            app.MapPost("/api/rooms/{roomId}/join", (string roomId, JoinRoomRequest request, IGameService gameService) =>
+            app.MapPost("/api/rooms/join/{roomId}", (string roomId, JoinRoomRequest request, IGameService gameService) =>
             {
-                var success = gameService.JoinRoom(roomId, request.Username,string.Empty);
+                var success = gameService.JoinRoom(roomId, request.Username,request.ConnectionId);
 
                 return success ? Results.Ok() : Results.BadRequest();
             });

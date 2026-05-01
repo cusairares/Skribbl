@@ -2,15 +2,20 @@ import { useContext, useState } from "react"
 import styles from "./CharacterCreator.module.css"
 import { RoomCodeDialog } from "../RoomIdDialog/RoomIdDialog"
 import { GameContext } from "../../context/GameContext";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { SignalRContext } from "../../context/SignalR/SignalRContext";
+import { useNavigate } from "react-router";
 
 function CharacterCreator(){
     const {username,updateUsername,roomId,updateRoomId} = useContext(GameContext)
+    const {executeJoinRoom} = useContext(SignalRContext)
 
     const [isCreating,setIsCreating] = useState(false)
     const [isJoining,setIsJoining] = useState(false)
     const [isDialog, setIsDialog] = useState(false)
-
+    const navigate = useNavigate();
     const baseRoomUrl = "https://localhost:7064/api/rooms"
+    
     const handleCreateRoom = async () =>{
         if(!username.trim()) return
 
@@ -21,19 +26,14 @@ function CharacterCreator(){
                 method: 'POST' 
             });
 
-            updateRoomId(await createRequest.json())
+            let {roomId} = await createRequest.json();
+            updateRoomId(roomId)
 
             console.log("Room ID received: ", roomId); 
 
-            const joinRequest = await fetch(baseRoomUrl + `/${roomId}/join`, { 
-                method: 'POST' ,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ Username: username.trim() })
-            });
-
-            if(joinRequest.ok){
+            if(createRequest.ok){
                 console.log("Successfully created room:", roomId);
-                handleJoinRoom(roomId)
+                executeJoinRoom(username,roomId,navigate)
             }
             else{
                 console.error("Failed to create the room.");
@@ -49,31 +49,11 @@ function CharacterCreator(){
     }
 
     const handleJoinRoom = async () =>{
-        if(!roomId.trim()) return
-
         setIsJoining(true)
-
-        try{
-            const joinRequest = await fetch(baseRoomUrl + `/${roomId}/join`,{
-                method:"POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ Username: username.trim() })
-            })
-            
-            if(joinRequest.ok){
-                console.log("Player "+ username.trim() +" successfully joined room with id: " + roomId)
-            }
-            else{
-                console.log("Failed to join room")
-            }
-        }
-        catch(error){
-            console.log("Network error: " + error)
-        }
-        finally{
-            setIsJoining(false)
-        }
+        await executeJoinRoom(username,roomId,navigate)
+        setIsJoining(false)
     }
+
 
     const toggleDialog = () =>{
         setIsDialog(prevState =>
