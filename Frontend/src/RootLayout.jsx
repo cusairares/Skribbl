@@ -1,15 +1,15 @@
 import { Outlet } from "react-router-dom";
-import { GameProvider } from "./context/GameProvider";
+import { SessionProvider } from "./context/Session/SessionProvider";
 import { SignalRProvider } from "./context/SignalR/SignalRProvider";
 
 export default function RootLayout() {
     return (
-        <GameProvider>
+        <SessionProvider>
             <SignalRProvider>
                  <main>
                     <Outlet/> 
                 </main>
             </SignalRProvider>
-        </GameProvider>
+        </SessionProvider>
     );
 }

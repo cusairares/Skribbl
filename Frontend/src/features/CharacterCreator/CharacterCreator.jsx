@@ -1,13 +1,13 @@
 import { useContext, useState } from "react"
 import styles from "./CharacterCreator.module.css"
-import { RoomCodeDialog } from "../RoomIdDialog/RoomIdDialog"
-import { GameContext } from "../../context/GameContext";
+import { RoomCodeDialog } from "../../components/RoomIdDialog/RoomIdDialog"
+import { SessionContext } from "../../context/Session/SessionContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { SignalRContext } from "../../context/SignalR/SignalRContext";
 import { useNavigate } from "react-router";
 
 function CharacterCreator(){
-    const {username,updateUsername,roomId,updateRoomId} = useContext(GameContext)
+    const {username,updateUsername,roomId,updateRoomId} = useContext(SessionContext)
     const {executeJoinRoom} = useContext(SignalRContext)
 
     const [isCreating,setIsCreating] = useState(false)

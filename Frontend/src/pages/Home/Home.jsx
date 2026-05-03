@@ -1,6 +1,6 @@
 
 import styles  from "./Home.module.css"
-import {CharacterCreator} from "../CharacterCreator/CharacterCreator.jsx"
+import {CharacterCreator} from "../../features/CharacterCreator/CharacterCreator.jsx"
 
 function Home() {
     return(

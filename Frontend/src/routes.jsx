@@ -1,5 +1,5 @@
-import { Game } from "./components/Game/Game";
-import { Home } from "./components/Home/Home";
+import { Game } from "./pages/Game/Game";
+import { Home } from "./pages/Home/Home";
 import RootLayout from "./RootLayout";
 
 const routes = [

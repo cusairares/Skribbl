@@ -2,16 +2,16 @@
 using Skribbl.Interfaces;
 using Skribbl.Models;
 
-namespace Skribbl.Services
+namespace Skribbl.Hubs
 {
-    public class GameHub : Hub
+    public class SessionHub : Hub
     {
         public record CanvasUpdate(string RoomId,double X,double Y,bool IsNewStroke,string Color,int Width);
         public record SignalRJoinRequest(string RoomId, string Username);
 
-        IGameService _gameService;
+        IService _gameService;
 
-        public GameHub(IGameService gameService) => _gameService = gameService;
+        public SessionHub(IService gameService) => _gameService = gameService;
 
         public async Task JoinSignalRGroup(SignalRJoinRequest request)
         {

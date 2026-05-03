@@ -2,25 +2,25 @@
 
 namespace Skribbl.Interfaces
 {
-    public interface IGameManager
+    public interface IRegistry
     {
         /// <summary>
         /// Adds the room to the _activeGames dictionary
         /// </summary>
         /// <param name="room"></param>
-        void AddRoom(GameState room);
+        void AddRoom(SessionState room);
 
         /// <summary>
         /// Removes the room from _activeGames and deletes all entries from _connectionIdMap
         /// </summary>
         /// <param name="room"></param>
-        void RemoveRoom(GameState room);
+        void RemoveRoom(SessionState room);
 
-        GameState? GetRoomByRoomId(string roomId);
+        SessionState? GetRoomByRoomId(string roomId);
 
-        GameState? GetRoomByConnectionId(string connectionId);
+        SessionState? GetRoomByConnectionId(string connectionId);
 
-        Player? GetPlayer(string connectionId);
+        Participant? GetPlayer(string connectionId);
 
         /// <summary>
         /// Adds player to specified room inside _activeGames and updates all entries from _connectionIdMap
@@ -28,7 +28,7 @@ namespace Skribbl.Interfaces
         /// <param name="roomId"></param>
         /// <param name="player"></param>
         /// <returns></returns>
-        bool AddPlayerToRoom(string roomId, Player player);
+        bool AddPlayerToRoom(string roomId, Participant player);
 
         /// <summary>
         /// Removes player from specified room inside _activeGames and deletes all entries from _connectionIdMap

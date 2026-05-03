@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { GameContext } from "./GameContext";
+import { SessionContext } from "./SessionContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
-function GameProvider({ children }) {
+function SessionProvider({ children }) {
     const [username, setUsername] = useState("");
     const [roomId, setRoomId] = useState("");
 
@@ -11,10 +11,10 @@ function GameProvider({ children }) {
 
     
     return (
-        <GameContext.Provider value={{ username, updateUsername, roomId, updateRoomId}}>
+        <SessionContext.Provider value={{ username, updateUsername, roomId, updateRoomId}}>
             {children}
-        </GameContext.Provider>
+        </SessionContext.Provider>
     );
 }
 
-export { GameProvider };
+export { SessionProvider };

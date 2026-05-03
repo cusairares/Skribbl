@@ -5,10 +5,10 @@ namespace Skribbl.Models
     ///<summary>
     ///Class <c>GameRoom</c>  holds  room state
     ///</summary>
-    public class GameState
+    public class SessionState
     {
         private string _id;
-        private List<Player> _players;
+        private List<Participant> _players;
         private string? _currentWord;
 
         public string Id
@@ -16,7 +16,7 @@ namespace Skribbl.Models
             get => _id;
             set => _id = value;
         }
-        public List<Player> Players
+        public List<Participant> Players
         {
             get => _players;
             set => _players = value;
@@ -27,10 +27,10 @@ namespace Skribbl.Models
             set => _currentWord = value;
         }
 
-        public GameState(string id)
+        public SessionState(string id)
         {
             _id = id;
-            _players = new List<Player>();
+            _players = new List<Participant>();
             _currentWord = null;
         }
 

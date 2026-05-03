@@ -2,7 +2,7 @@
 
 namespace Skribbl.Interfaces
 {
-    public interface IGameService
+    public interface IService
     {
 
 
@@ -28,7 +28,7 @@ namespace Skribbl.Interfaces
         /// </summary>
         /// <param name="roomId"></param>
         /// <returns></returns>
-        Player GetWinner(string roomId);
+        Participant GetWinner(string roomId);
 
         /// <summary>
         /// Explictly adding points for a given player

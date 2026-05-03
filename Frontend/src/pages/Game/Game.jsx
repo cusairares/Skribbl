@@ -1,4 +1,4 @@
-import { Canvas } from "../Canvas/Canvas"
+import { Canvas } from "../../features/Canvas/Canvas"
 
 function Game(){
     return(

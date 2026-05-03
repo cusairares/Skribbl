@@ -1,8 +1,8 @@
 import { useContext } from "react"
-import { GameContext } from "../../context/GameContext"
+import { SessionContext } from "../../context/Session/SessionContext"
 import styles from "./RoomIdDialog.module.css"
 function RoomCodeDialog({ toggleDialog, handleJoinRoom, isJoining }){
-    const {roomId,updateRoomId} = useContext(GameContext)
+    const {roomId,updateRoomId} = useContext(SessionContext)
 
     return(
         <>

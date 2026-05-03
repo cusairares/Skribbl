@@ -1,13 +1,13 @@
 import React, { useState, useRef ,useEffect, useContext} from 'react';
 import { Stage, Layer, Line } from 'react-konva';
 import { SignalRContext } from "../../context/SignalR/SignalRContext";
-import { GameContext } from '../../context/GameContext';
+import { SessionContext } from '../../context/Session/SessionContext';
 function Canvas() {
   const [lines, setLines] = useState([]);
   const isDrawing = useRef(false); 
 
   const {connection} = useContext(SignalRContext)
-  const {roomId} = useContext(GameContext)
+  const {roomId} = useContext(SessionContext)
   const lastSentTime = useRef(0);
 
   const handleMouseDown = (e) => {

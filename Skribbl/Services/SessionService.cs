@@ -3,11 +3,11 @@ using Skribbl.Models;
 
 namespace Skribbl.Services
 {
-    public class GameService : IGameService
+    public class SessionService : IService
     {
-        private IGameManager _gameManager;
+        private IRegistry _gameManager;
 
-        public GameService(IGameManager gameManager)
+        public SessionService(IRegistry gameManager)
         {
             _gameManager = gameManager;
         }
@@ -15,7 +15,7 @@ namespace Skribbl.Services
         public string CreateRoom()
         {
             var roomId = GenerateUniqueId();
-            var newState = new GameState(roomId);
+            var newState = new SessionState(roomId);
             _gameManager.AddRoom(newState);
 
             return roomId;
@@ -40,7 +40,7 @@ namespace Skribbl.Services
                 Console.WriteLine("[DEBUG] Join failed: Username is null or empty.");
                 return false;
             }
-            var player = new Player { Username = username, ConnectionId = connectionId ,Score = 0};
+            var player = new Participant { Username = username, ConnectionId = connectionId ,Score = 0};
             _gameManager.AddPlayerToRoom(roomId, player);
             return true;
 
@@ -51,7 +51,7 @@ namespace Skribbl.Services
             return _gameManager.RemovePlayer(connectionId);
         }
 
-        public Player GetWinner(string roomId)
+        public Participant GetWinner(string roomId)
         {
             throw new NotImplementedException();
         }
@@ -61,7 +61,7 @@ namespace Skribbl.Services
             throw new NotImplementedException();
         }
 
-        public Player GetNextDrawer(string roomId)
+        public Participant GetNextDrawer(string roomId)
         {
             throw new NotImplementedException();
         }

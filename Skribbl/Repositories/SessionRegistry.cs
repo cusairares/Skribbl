@@ -1,32 +1,33 @@
 ﻿using Skribbl.Interfaces;
+using Skribbl.Models;
 using System.Collections.Concurrent;
 
-namespace Skribbl.Models
+namespace Skribbl.Repositories
 {
-    public class GameManager : IGameManager
+    public class SessionRegistry : IRegistry
     {
         private Random _random;
         private List<string> _words = new List<string>() { "Soare", "Caine", "Braila" };
 
         //roomId - room
-        private ConcurrentDictionary<string, GameState> _activeGames;
+        private ConcurrentDictionary<string, SessionState> _activeGames;
 
         //connectionId - roomId
         //rooms can have only unique connection ids
         private ConcurrentDictionary<string, string> _connectionIdMap = new();
 
-        public GameManager()
+        public SessionRegistry()
         {
             _random = new Random();
-            _activeGames = new ConcurrentDictionary<string, GameState>();
+            _activeGames = new ConcurrentDictionary<string, SessionState>();
         }
 
-        public void AddRoom(GameState gameState)
+        public void AddRoom(SessionState gameState)
         {
             _activeGames[gameState.Id] = gameState;
         }
 
-        public void RemoveRoom(GameState gameState)
+        public void RemoveRoom(SessionState gameState)
         {
             _activeGames.TryRemove(gameState.Id, out _);
 
@@ -38,12 +39,12 @@ namespace Skribbl.Models
             }
         }
 
-        public GameState? GetRoomByRoomId(string roomId)
+        public SessionState? GetRoomByRoomId(string roomId)
         {
             return _activeGames.GetValueOrDefault(roomId);
         }
 
-        public GameState? GetRoomByConnectionId(string connectionId)
+        public SessionState? GetRoomByConnectionId(string connectionId)
         {
             if (_connectionIdMap.TryGetValue(connectionId, out var roomId))
             {
@@ -53,7 +54,7 @@ namespace Skribbl.Models
             return null;
         }
 
-        public Player? GetPlayer(string connectionId)
+        public Participant? GetPlayer(string connectionId)
         {
             var room = GetRoomByConnectionId(connectionId);
             if (room == null)
@@ -63,7 +64,7 @@ namespace Skribbl.Models
             return player;
         }
 
-        public bool AddPlayerToRoom(string roomId, Player player)
+        public bool AddPlayerToRoom(string roomId, Participant player)
         {
             var room = GetRoomByRoomId(roomId);
             if (room == null)

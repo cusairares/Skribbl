@@ -1,6 +1,7 @@
 using Skribbl.Endpoints;
+using Skribbl.Hubs;
 using Skribbl.Interfaces;
-using Skribbl.Models;
+using Skribbl.Repositories;
 using Skribbl.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,8 +20,8 @@ builder.Services.AddCors(options => {
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IGameManager,GameManager>();
-builder.Services.AddSingleton<IGameService,GameService>();
+builder.Services.AddSingleton<IRegistry,SessionRegistry>();
+builder.Services.AddSingleton<IService,SessionService>();
 builder.Services.AddSignalR()
     .AddJsonProtocol(options => {
         options.PayloadSerializerOptions.PropertyNamingPolicy = null;
@@ -42,5 +43,5 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapHub<GameHub>("/gamehub");
+app.MapHub<SessionHub>("/gamehub");
 app.Run();
