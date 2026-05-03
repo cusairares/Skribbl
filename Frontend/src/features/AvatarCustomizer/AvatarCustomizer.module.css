@@ -1,0 +1,78 @@
+
+.avatarCustomizer{
+    display: flex;
+    background-color: #103086;
+    height: 100px; 
+    width: 100%; 
+    padding: 5px;
+}
+
+.containerLeft, .containerRight{
+    width: fit-content;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.containerLeft{
+    align-items: flex-end;
+}
+
+.containerRight{
+    align-items: flex-start;
+}
+
+.containerLeft .arrow:hover{
+    cursor: pointer;
+    background-position: 100% 0;
+}
+
+.containerRight .arrow{
+    background-position: 0 100%;
+}
+
+.containerRight .arrow:hover{
+    cursor: pointer;
+    background-position: 100% 100%;
+}
+
+
+.arrow{
+    image-rendering: pixelated;
+    width: 30px;
+    height: 30px;
+    background-image: url("src/assets/arrow.gif");
+    background-size: 200%;
+}
+
+.avatar{
+    position: relative;
+    height: 100%; 
+    height: 100%;
+    flex-grow: 1;
+}
+
+.body, .eyes, .mouth {
+    image-rendering: pixelated;
+    width: 100%;
+    height: 80%;
+    background-size: 1000%;
+    position: absolute;
+    top: 0px;
+    left: 0;
+}
+
+.body {
+    background-image: url("src/assets/color_atlas.gif");
+    z-index: 1;
+}
+
+.eyes {
+    background-image: url("src/assets/eyes_atlas.gif");
+    z-index: 2;
+}
+.mouth {
+    background-image: url("src/assets/mouth_atlas.gif");
+    z-index: 3;
+}
+

@@ -1,0 +1,83 @@
+
+
+.characterPanel{
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    height: fit-content;
+    background-color: #123595;
+    padding: 15px;
+}
+.characterPanel > * {
+    border-radius: 4px;
+}
+
+.characterPanel > button {
+    font-size: large;
+    font-weight: bolder;
+}
+
+.containerNameLang{
+    display: flex;
+    height: 25px;
+    margin-bottom: 10px;
+}
+.containerNameLang > *{
+    border-radius: 2px;
+}
+
+.inputName{
+    padding: 7px;
+    flex-grow: 1;
+    margin-right: 10px;
+    border: 2px solid transparent;
+}
+
+.inputName:focus{
+    outline: none;
+    border-color: #608bff;
+    
+}
+
+select{
+    border: 2px solid transparent;
+}
+select:focus{
+    outline: none;
+    border-color: #608bff;
+}
+
+.buttonPlay{
+    margin-top: 15px;
+    background-color: #49fb25;
+    color: white;
+    padding: 12px 0px ;
+    border: #49fb25;
+    margin-bottom: 8px;
+}
+
+.buttonPlay:hover{
+    cursor: pointer;
+    background-color: #38C41C;
+    border: #38C41C;
+}
+
+.buttonCreate{
+    background-color: #1b91ff;
+    color: white;
+    padding: 8px 0px;
+    border:#1b91ff;
+}
+
+.buttonCreate:hover{
+    cursor: pointer;
+    background-color: #1671C5;
+    border: #1671C5;
+}
+
+
+.disabled{
+    visibility: hidden;
+}

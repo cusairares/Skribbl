@@ -1,12 +1,13 @@
 import { useContext, useState } from "react"
-import styles from "./CharacterCreator.module.css"
-import { RoomCodeDialog } from "../../components/RoomIdDialog/RoomIdDialog"
+import { RoomCodeDialog } from "../RoomIdDialog/RoomIdDialog"
 import { SessionContext } from "../../context/Session/SessionContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { SignalRContext } from "../../context/SignalR/SignalRContext";
 import { useNavigate } from "react-router";
+import { AvatarCustomizer } from "../../features/AvatarCustomizer/AvatarCustomizer";
+import styles from "./CharacterPanel.module.css"
 
-function CharacterCreator(){
+function CharacterPanel(){
     const {username,updateUsername,roomId,updateRoomId} = useContext(SessionContext)
     const {executeJoinRoom} = useContext(SignalRContext)
 
@@ -54,7 +55,6 @@ function CharacterCreator(){
         setIsJoining(false)
     }
 
-
     const toggleDialog = () =>{
         setIsDialog(prevState =>
             !prevState
@@ -62,7 +62,7 @@ function CharacterCreator(){
     }
 
     return(
-        <div className={styles.creatorWrapper}>
+        <div data-testid="character-panel" className={styles.characterPanel}>
             {isDialog ?
             (<RoomCodeDialog 
                 handleJoinRoom={handleJoinRoom} 
@@ -72,26 +72,37 @@ function CharacterCreator(){
             ):
             (
             <>
-                <input 
+                <div data-testid="container-name-lang" className={styles.containerNameLang}>
+                    <input 
+                    data-testid="input-name"
                     placeholder="Enter your name"
-                    className={styles.nameTextInput} 
+                    className={styles.inputName} 
                     type="text" 
                     value={username} 
                     onChange={(e) => updateUsername(e.target.value)}
                     disabled={isCreating || isJoining}
-                />
+                    />
+                    <select data-testid="select-lang">
+                        <option value={0}>English</option>
+                        <option value={1}>Romanian</option>
+                    </select>
+                </div>
+                <AvatarCustomizer></AvatarCustomizer>
                 <button 
-                    className={styles.createRoomButton}
+                    data-testid="button-play"
+                    className={styles.buttonPlay}
+                    onClick={handleJoinRoom}
+                    disabled={isJoining || username.trim().length === 0} 
+                >
+                    {isJoining ? "Joining..." : "Play!"}
+                </button>
+                <button 
+                    data-testid="button-create"
+                    className={styles.buttonCreate} 
+                    disabled={isCreating || username.trim().length === 0}
                     onClick={handleCreateRoom}
-                    disabled={isCreating || username.trim().length === 0} 
                 >
                     {isCreating ? "Creating..." : "Create Room"}
-                </button>
-                <button className={styles.joinRoomButton} 
-                    disabled={isJoining || username.trim().length === 0}
-                    onClick={toggleDialog}
-                >
-                    {isJoining ? "Joining..." : "Join Room"}
                 </button>
             </>
             )
@@ -101,4 +112,4 @@ function CharacterCreator(){
     )
 
 }
-export {CharacterCreator}
+export {CharacterPanel}
