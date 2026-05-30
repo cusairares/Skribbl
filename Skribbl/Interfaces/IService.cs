@@ -1,3 +1,4 @@
+using Skribbl.DTO;
 using Skribbl.Models;
 
 namespace Skribbl.Interfaces

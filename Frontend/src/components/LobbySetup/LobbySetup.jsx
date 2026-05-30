@@ -1,13 +1,13 @@
 import { useContext, useState } from "react"
-import { RoomCodeDialog } from "../RoomIdDialog/RoomIdDialog"
+import { RoomCodeDialog } from "../RoomCodeDialog/RoomCodeDialog"
 import { SessionContext } from "../../context/Session/SessionContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { SignalRContext } from "../../context/SignalR/SignalRContext";
 import { useNavigate } from "react-router";
 import { AvatarCustomizer } from "../../features/AvatarCustomizer/AvatarCustomizer";
-import styles from "./CharacterPanel.module.css"
+import styles from "./LobbySetup.module.css"
 
-function CharacterPanel(){
+function LobbySetup(){
     const {username,updateUsername,roomId,updateRoomId,avatarOptions} = useContext(SessionContext)
     const {executeJoinRoom} = useContext(SignalRContext)
 
@@ -62,7 +62,7 @@ function CharacterPanel(){
     }
 
     return(
-        <div data-testid="character-panel" className={styles.characterPanel}>
+        <div data-testid="lobby-setup" className={styles.lobbySetup}>
             {isDialog ?
             (<RoomCodeDialog 
                 handleJoinRoom={handleJoinRoom} 
@@ -112,4 +112,4 @@ function CharacterPanel(){
     )
 
 }
-export {CharacterPanel}
+export {LobbySetup}

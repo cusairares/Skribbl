@@ -52,19 +52,19 @@ function SignalRProvider({children}){
 
     const getActiveConnection = async(targetUsername,targetRoomId)=>{
         const newConnection = new HubConnectionBuilder()
-                    .withUrl("https://localhost:7064/gamehub")
-                    .build()
+                .withUrl("https://localhost:7064/gamehub")
+                .build()
         
-            updateConnection(newConnection)
+        updateConnection(newConnection)
 
-            await newConnection.start()
-            console.log("SignalR Connection successful");
+        await newConnection.start()
+        console.log("SignalR Connection successful");
 
-            const freshId = newConnection.connectionId; 
+        const freshId = newConnection.connectionId; 
 
-            console.log("SignalR ConnectionId: "+ freshId);
-            updateConnection(newConnection);
-            updateConnectionId(freshId);
+        console.log("SignalR ConnectionId: "+ freshId);
+        updateConnection(newConnection);
+        updateConnectionId(freshId);
         return newConnection
     }
 
