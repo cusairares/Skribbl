@@ -2,16 +2,21 @@
 .avatarCustomizer{
     display: flex;
     background-color: #103086;
-    height: 100px; 
-    width: 100%; 
-    padding: 5px;
+    height: 120px; 
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .containerLeft, .containerRight{
     width: fit-content;
     display: flex;
-    flex-grow: 1;
     flex-direction: column;
+    justify-content: center;
+    gap: 5px;
 }
 
 .containerLeft{
@@ -47,22 +52,22 @@
 
 .avatar{
     position: relative;
-    height: 100%; 
-    height: 100%;
-    flex-grow: 1;
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
 }
 
-.body, .eyes, .mouth {
+.color, .eyes, .mouth {
     image-rendering: pixelated;
     width: 100%;
-    height: 80%;
+    height: 100%;
     background-size: 1000%;
     position: absolute;
     top: 0px;
     left: 0;
 }
 
-.body {
+.color {
     background-image: url("src/assets/color_atlas.gif");
     z-index: 1;
 }

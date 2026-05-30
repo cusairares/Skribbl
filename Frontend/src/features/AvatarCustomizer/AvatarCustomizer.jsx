@@ -1,21 +1,26 @@
+import { useContext } from "react"
+import { SessionContext } from "../../context/Session/SessionContext"
 import styles from "./AvatarCustomizer.module.css"
+
 function AvatarCustomizer(){
+    const { updateAvatarOptions, getStyle } = useContext(SessionContext)
+
     return(
         <div data-testid="avatar-customizer" className={styles.avatarCustomizer}>
-            <div data-testid="container-left" className={styles.containerLeft}>
-                <div data-testid="left" className={styles.arrow} ></div>
-                <div data-testid="left" className={styles.arrow}></div>
-                <div data-testid="left" className={styles.arrow}></div>
+            <div className={styles.containerLeft}>
+                <div className={styles.arrow} onClick={() => updateAvatarOptions('eyes', 'left')}></div>
+                <div className={styles.arrow} onClick={() => updateAvatarOptions('mouth', 'left')}></div>
+                <div className={styles.arrow} onClick={() => updateAvatarOptions('color', 'left')}></div>
             </div>
-            <div data-testid="avatar" className={styles.avatar}>
-                <div data-testid="eyes" className={styles.eyes}></div>
-                <div data-testid="mouth" className={styles.mouth}></div>
-                <div data-testid="body" className={styles.body}></div>
+            <div className={styles.avatar}>
+                <div className={styles.eyes} style={getStyle('eyes')}></div>
+                <div className={styles.mouth} style={getStyle('mouth')}></div>
+                <div className={styles.color} style={getStyle('color')}></div>
             </div>
-            <div data-testid="container-right" className={styles.containerRight}>
-                <div data-testid="left" className={styles.arrow} ></div>
-                <div data-testid="left" className={styles.arrow}></div>
-                <div data-testid="left" className={styles.arrow}></div>
+            <div className={styles.containerRight}>
+                <div className={styles.arrow} onClick={() => updateAvatarOptions('eyes', 'right')}></div>
+                <div className={styles.arrow} onClick={() => updateAvatarOptions('mouth', 'right')}></div>
+                <div className={styles.arrow} onClick={() => updateAvatarOptions('color', 'right')}></div>
             </div>
         </div>
     )
