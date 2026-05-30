@@ -8,7 +8,7 @@ import { AvatarCustomizer } from "../../features/AvatarCustomizer/AvatarCustomiz
 import styles from "./CharacterPanel.module.css"
 
 function CharacterPanel(){
-    const {username,updateUsername,roomId,updateRoomId} = useContext(SessionContext)
+    const {username,updateUsername,roomId,updateRoomId,avatarOptions} = useContext(SessionContext)
     const {executeJoinRoom} = useContext(SignalRContext)
 
     const [isCreating,setIsCreating] = useState(false)
@@ -34,7 +34,7 @@ function CharacterPanel(){
 
             if(createRequest.ok){
                 console.log("Successfully created room:", roomId);
-                executeJoinRoom(username,roomId,navigate)
+                executeJoinRoom(roomId, { username, avatarOptions }, navigate)
             }
             else{
                 console.error("Failed to create the room.");
@@ -51,7 +51,7 @@ function CharacterPanel(){
 
     const handleJoinRoom = async () =>{
         setIsJoining(true)
-        await executeJoinRoom(username,roomId,navigate)
+        await executeJoinRoom(roomId,{username, avatarOptions}, navigate)
         setIsJoining(false)
     }
 

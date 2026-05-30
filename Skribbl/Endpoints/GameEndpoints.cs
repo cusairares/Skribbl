@@ -1,5 +1,5 @@
-﻿using Skribbl.Interfaces;
-using Skribbl.Models;
+using Skribbl.DTO;
+using Skribbl.Interfaces;
 
 namespace Skribbl.Endpoints
 {
@@ -7,7 +7,7 @@ namespace Skribbl.Endpoints
     {
         public record CreateRoomRequest(string Username);
 
-        public record JoinRoomRequest(string Username,string ConnectionId);
+
         public static void MapServiceEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost("/api/rooms/create", (IService gameService) =>
@@ -16,9 +16,9 @@ namespace Skribbl.Endpoints
                 return Results.Ok(new { roomId });
             });
 
-            app.MapPost("/api/rooms/join/{roomId}", (string roomId, JoinRoomRequest request, IService gameService) =>
+            app.MapPost("/api/rooms/join/{roomId}", (string roomId, JoinRoomDto request, IService gameService) =>
             {
-                var success = gameService.JoinRoom(roomId, request.Username,request.ConnectionId);
+                var success = gameService.JoinRoom(roomId, request);
 
                 return success ? Results.Ok() : Results.BadRequest();
             });

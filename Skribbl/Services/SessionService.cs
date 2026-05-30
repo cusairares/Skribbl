@@ -1,4 +1,4 @@
-﻿using Skribbl.Interfaces;
+using Skribbl.Interfaces;
 using Skribbl.Models;
 
 namespace Skribbl.Services
@@ -26,7 +26,7 @@ namespace Skribbl.Services
             return Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
         }
 
-        public bool JoinRoom(string roomId, string username, string connectionId)
+        public bool JoinRoom(string roomId, JoinRoomDto request)
         {
             var room = _gameManager.GetRoomByRoomId(roomId);
             if (room == null)
@@ -35,12 +35,12 @@ namespace Skribbl.Services
                 return false;
             }
 
-            if (string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(request.Username))
             {
                 Console.WriteLine("[DEBUG] Join failed: Username is null or empty.");
                 return false;
             }
-            var player = new Participant { Username = username, ConnectionId = connectionId ,Score = 0};
+            var player = new Participant { Username = request.Username, ConnectionId = request.ConnectionId, Score = 0, AvatarOptions = request.AvatarOptions };
             _gameManager.AddPlayerToRoom(roomId, player);
             return true;
 

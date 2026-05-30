@@ -1,4 +1,4 @@
-﻿using Skribbl.Models;
+using Skribbl.Models;
 
 namespace Skribbl.Interfaces
 {
@@ -19,7 +19,7 @@ namespace Skribbl.Interfaces
         /// <param name="username"></param>
         /// <param name="connectionId"></param>
         /// <returns></returns>
-        bool JoinRoom(string roomId, string username, string connectionId);
+        bool JoinRoom(string roomId, JoinRoomDto request);
 
         bool LeaveRoom(string connectionId);
 
