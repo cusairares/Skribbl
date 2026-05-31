@@ -1,7 +1,22 @@
+:root {
+  /* Button & Layout Colors */
+  --color-primary: #123595;
+  --color-success: #49fb25;
+  --color-success-hover: #38C41C;
+  --color-info: #1b91ff;
+  --color-info-hover: #1671C5;
+  --color-focus-border: #608bff;
+
+  /* Layout Standards */
+  --border-radius: 3px;
+}
+
 html, body, #root {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
+  font-family: Nunito,sans-serif;
 }
+
 

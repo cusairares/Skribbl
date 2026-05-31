@@ -2,6 +2,7 @@ import React, { useState, useRef ,useEffect, useContext} from 'react';
 import { Stage, Layer, Line } from 'react-konva';
 import { SignalRContext } from "../../context/SignalR/SignalRContext";
 import { SessionContext } from '../../context/Session/SessionContext';
+
 function Canvas() {
   const [lines, setLines] = useState([]);
   const isDrawing = useRef(false); 
@@ -9,6 +10,25 @@ function Canvas() {
   const {connection} = useContext(SignalRContext)
   const {roomId} = useContext(SessionContext)
   const lastSentTime = useRef(0);
+
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleResize = () => {
+      setDimensions({
+        width: containerRef.current.offsetWidth,
+        height: containerRef.current.offsetHeight
+      });
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleMouseDown = (e) => {
       isDrawing.current = true;
@@ -68,60 +88,62 @@ function Canvas() {
     isDrawing.current = false;
   };
 
-useEffect(() => {
-    if (!connection) return;
+  useEffect(() => {
+      if (!connection) return;
 
-    connection.on("CanvasUpdated", (update) => {
-      if (update.IsNewStroke) {
-        setLines(prev => [...prev, {
-            points: [update.X, update.Y],
-            stroke: update.Color ?? '#000000',
-            strokeWidth: update.Width ?? 5
-        }]);
-      } 
-      else {
-        setLines(prev => {
-          if (prev.length === 0) {
-            return [{
+      connection.on("CanvasUpdated", (update) => {
+        if (update.IsNewStroke) {
+          setLines(prev => [...prev, {
               points: [update.X, update.Y],
               stroke: update.Color ?? '#000000',
               strokeWidth: update.Width ?? 5
-            }];
-          }
-          const newLines = [...prev];
-          const lastLine = { ...newLines[newLines.length - 1] };
-          lastLine.points = [...(lastLine.points ?? []), update.X, update.Y];
-          newLines[newLines.length - 1] = lastLine;
-          return newLines;
-        });
-      }
-    });
+          }]);
+        } 
+        else {
+          setLines(prev => {
+            if (prev.length === 0) {
+              return [{
+                points: [update.X, update.Y],
+                stroke: update.Color ?? '#000000',
+                strokeWidth: update.Width ?? 5
+              }];
+            }
+            const newLines = [...prev];
+            const lastLine = { ...newLines[newLines.length - 1] };
+            lastLine.points = [...(lastLine.points ?? []), update.X, update.Y];
+            newLines[newLines.length - 1] = lastLine;
+            return newLines;
+          });
+        }
+      });
 
     return () => connection.off("CanvasUpdated");
-}, [connection]);
+  }, [connection]);
   
   return (
-    <Stage
-      width={window.innerWidth}
-      height={window.innerHeight}
-      onMouseDown={handleMouseDown}
-      onMousemove={handleMouseMove}
-      onMouseup={handleMouseUp}
-    >
-      <Layer>
-        {lines.map((line, i) => (
-          <Line
-            key={i}
-            points={line.points}
-            stroke={line.stroke}
-            strokeWidth={line.strokeWidth}
-            tension={0.5}
-            lineCap="round"
-            lineJoin="round"
-          />
-        ))}
-      </Layer>
-    </Stage>
+    <div ref={containerRef} style={{ position: 'relative', overflow: 'hidden', width: '100%', height: '100%' }}>
+      <Stage
+        width={dimensions.width}
+        height={dimensions.height}
+        onMouseDown={handleMouseDown}
+        onMousemove={handleMouseMove}
+        onMouseup={handleMouseUp}
+      >
+        <Layer>
+          {lines.map((line, i) => (
+            <Line
+              key={i}
+              points={line.points}
+              stroke={line.stroke}
+              strokeWidth={line.strokeWidth}
+              tension={0.5}
+              lineCap="round"
+              lineJoin="round"
+            />
+          ))}
+        </Layer>
+      </Stage>
+    </div>
   );
 }
 

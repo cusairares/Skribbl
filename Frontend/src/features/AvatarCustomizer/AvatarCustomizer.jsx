@@ -6,7 +6,7 @@ function AvatarCustomizer(){
     const { updateAvatarOptions, getStyle } = useContext(SessionContext)
 
     return(
-        <div data-testid="avatar-customizer" className={styles.avatarCustomizer}>
+        <div data-component="avatar-customizer" className={styles.avatarCustomizer}>
             <div className={styles.containerLeft}>
                 <div className={styles.arrow} onClick={() => updateAvatarOptions('eyes', 'left')}></div>
                 <div className={styles.arrow} onClick={() => updateAvatarOptions('mouth', 'left')}></div>

@@ -1,4 +1,4 @@
-.creatorWrapper{
+.roomCodeDialog{
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -6,50 +6,58 @@
     margin-right: auto;
     width: 300px;
     height: fit-content;
-    background-color: #123595;
+    background-color: var(--color-primary);
     padding: 15px;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
+}
+
+.roomCodeDialog > button {
+    font-size: large;
+    font-weight: bolder;
 }
 
 .roomIdInput{
-    border: 0;
-    border-radius: 4px;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
     padding: 7px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .roomIdInput:focus{
-    border: 0;
+    outline: none;
+    border-color: var(--color-focus-border);
 }
 
 .joinRoomButton{
-    margin-top: 150px;
-    background-color: #49fb25;
+    margin-top: 15px;
+    background-color: var(--color-success);
     color: white;
     padding: 15px;
-    border: #49fb25;
-    border-radius: 4px;
+    border: var(--color-success);
+    border-radius: var(--border-radius);
 }
 
 .joinRoomButton:hover{
     cursor: pointer;
-    background-color: #38C41C;
-    border: #38C41C;
+    background-color: var(--color-success-hover);
+    border: var(--color-success-hover);
 }
 
 .backButton{
-    background-color: #1b91ff;
+    background-color: var(--color-info);
     color: white;
     padding: 10px;
-    border:#1b91ff;
-    border-radius: 4px;
+    border: var(--color-info);
+    border-radius: var(--border-radius);
 }
 
 .backButton:hover{
     cursor: pointer;
-    background-color: #1671C5;
-    border: #1671C5;
+    background-color: var(--color-info-hover);
+    border: var(--color-info-hover);
 }
 
 .namebox{
-    display: flexbox;
+    display: flex;
 }

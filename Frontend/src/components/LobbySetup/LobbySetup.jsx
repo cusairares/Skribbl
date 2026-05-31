@@ -50,6 +50,10 @@ function LobbySetup(){
     }
 
     const handleJoinRoom = async () =>{
+        if(!roomId || !roomId.trim()){
+            toggleDialog();
+            return;
+        }
         setIsJoining(true)
         await executeJoinRoom(roomId,{username, avatarOptions}, navigate)
         setIsJoining(false)
@@ -61,55 +65,52 @@ function LobbySetup(){
         )
     }
 
-    return(
-        <div data-testid="lobby-setup" className={styles.lobbySetup}>
-            {isDialog ?
-            (<RoomCodeDialog 
+    if (isDialog) {
+        return (
+            <RoomCodeDialog 
                 handleJoinRoom={handleJoinRoom} 
                 toggleDialog={toggleDialog}
                 isJoining={isJoining}
             />
-            ):
-            (
-            <>
-                <div data-testid="container-name-lang" className={styles.containerNameLang}>
-                    <input 
-                    data-testid="input-name"
+        );
+    }
+
+    return (
+        <div data-component="lobby-setup" className={styles.lobbySetup}>
+            <div data-component="container-name-lang" className={styles.containerNameLang}>
+                <input 
+                    data-component="input-name"
                     placeholder="Enter your name"
                     className={styles.inputName} 
                     type="text" 
                     value={username} 
                     onChange={(e) => updateUsername(e.target.value)}
                     disabled={isCreating || isJoining}
-                    />
-                    <select data-testid="select-lang">
-                        <option value={0}>English</option>
-                        <option value={1}>Romanian</option>
-                    </select>
-                </div>
-                <AvatarCustomizer></AvatarCustomizer>
-                <button 
-                    data-testid="button-play"
-                    className={styles.buttonPlay}
-                    onClick={handleJoinRoom}
-                    disabled={isJoining || username.trim().length === 0} 
-                >
-                    {isJoining ? "Joining..." : "Play!"}
-                </button>
-                <button 
-                    data-testid="button-create"
-                    className={styles.buttonCreate} 
-                    disabled={isCreating || username.trim().length === 0}
-                    onClick={handleCreateRoom}
-                >
-                    {isCreating ? "Creating..." : "Create Room"}
-                </button>
-            </>
-            )
-            }
-            
+                />
+                <select data-component="select-lang">
+                    <option value={0}>English</option>
+                    <option value={1}>Romanian</option>
+                </select>
+            </div>
+            <AvatarCustomizer></AvatarCustomizer>
+            <button 
+                data-component="button-join"
+                className={styles.buttonJoin}
+                onClick={handleJoinRoom}
+                disabled={isJoining || username.trim().length === 0} 
+            >
+                {isJoining ? "Joining..." : "Join Room"}
+            </button>
+            <button 
+                data-component="button-create"
+                className={styles.buttonCreate} 
+                disabled={isCreating || username.trim().length === 0}
+                onClick={handleCreateRoom}
+            >
+                {isCreating ? "Creating..." : "Create Room"}
+            </button>
         </div>
-    )
+    );
 
 }
 export {LobbySetup}

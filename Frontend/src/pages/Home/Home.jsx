@@ -5,8 +5,8 @@ import logo from '../../assets/logo.gif';
 
 function Home() {
     return(
-      <div data-testid= "home" className={styles.home}>
-          <img data-testid="logo" className={styles.logo } src={logo}></img>
+      <div data-component= "home" className={styles.home}>
+          <img data-component="logo" className={styles.logo } src={logo}></img>
           <LobbySetup></LobbySetup>
       </div>
     )

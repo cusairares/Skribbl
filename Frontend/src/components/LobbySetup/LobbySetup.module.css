@@ -7,25 +7,26 @@
     margin-right: auto;
     width: 300px;
     height: fit-content;
-    background-color: #123595;
+    background-color: var(--color-primary);
     padding: 15px;
-}
-.characterPanel > * {
-    border-radius: 4px;
+    border-radius: var(--border-radius);
 }
 
-.characterPanel > button {
+.lobbySetup > * {
+    border-radius: var(--border-radius);
+}
+
+.lobbySetup > button {
     font-size: large;
     font-weight: bolder;
 }
 
 .containerNameLang{
     display: flex;
-    height: 25px;
     margin-bottom: 10px;
 }
 .containerNameLang > *{
-    border-radius: 2px;
+    border-radius: var(--border-radius);
 }
 
 .inputName{
@@ -37,8 +38,7 @@
 
 .inputName:focus{
     outline: none;
-    border-color: #608bff;
-    
+    border-color: var(--color-focus-border);
 }
 
 select{
@@ -46,35 +46,35 @@ select{
 }
 select:focus{
     outline: none;
-    border-color: #608bff;
+    border-color: var(--color-focus-border);
 }
 
-.buttonPlay{
+.buttonJoin{
     margin-top: 15px;
-    background-color: #49fb25;
+    background-color: var(--color-success);
     color: white;
     padding: 12px 0px ;
-    border: #49fb25;
+    border: var(--color-success);
     margin-bottom: 8px;
 }
 
-.buttonPlay:hover{
+.buttonJoin:hover{
     cursor: pointer;
-    background-color: #38C41C;
-    border: #38C41C;
+    background-color: var(--color-success-hover);
+    border: var(--color-success-hover);
 }
 
 .buttonCreate{
-    background-color: #1b91ff;
+    background-color: var(--color-info);
     color: white;
     padding: 8px 0px;
-    border:#1b91ff;
+    border: var(--color-info);
 }
 
 .buttonCreate:hover{
     cursor: pointer;
-    background-color: #1671C5;
-    border: #1671C5;
+    background-color: var(--color-info-hover);
+    border: var(--color-info-hover);
 }
 
 
