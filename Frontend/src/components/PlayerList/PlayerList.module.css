@@ -1,9 +1,8 @@
 .playerList {
-    background-color: #ffebeb;
-    border: 2px dashed #ffb3b3;
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: 46px;
     box-sizing: border-box;
-    border-radius: var(--border-radius);
+    gap:3px;
 }

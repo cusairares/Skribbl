@@ -11,8 +11,10 @@
 
 .clock{
     height: 100%;
-    margin-right: auto;
     padding-left: 10px;
+}
+.rounds{
+    margin-right: auto;
 }
 
 .settings{

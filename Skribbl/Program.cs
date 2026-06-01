@@ -22,10 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IRegistry,SessionRegistry>();
 builder.Services.AddSingleton<IService,SessionService>();
-builder.Services.AddSignalR()
-    .AddJsonProtocol(options => {
-        options.PayloadSerializerOptions.PropertyNamingPolicy = null;
-    });
+builder.Services.AddSignalR();
 
 
 

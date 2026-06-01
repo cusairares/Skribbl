@@ -22,6 +22,13 @@ namespace Skribbl.Endpoints
 
                 return success ? Results.Ok() : Results.BadRequest();
             });
+
+            app.MapGet("/api/{roomId}", (string roomId, IService sessionService) =>
+            {
+                var participants = sessionService.FetchParticipants(roomId);
+
+                return Results.Ok( new { participants });
+            });
         }
     }
 }

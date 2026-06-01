@@ -1,0 +1,50 @@
+.player{
+    display:  flex;
+    align-items: center;
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 0px 5px;
+}
+
+.place{
+    margin-right: auto;
+}
+
+.player > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.avatar{
+    margin-left: auto;
+    position: relative;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    justify-self: end;
+}
+
+.color, .eyes, .mouth {
+    image-rendering: pixelated;
+    width: 100%;
+    height: 100%;
+    background-size: 1000%;
+    position: absolute;
+    top: 0px;
+    left: 0;
+}
+
+.color {
+    background-image: url("src/assets/color_atlas.gif");
+    z-index: 1;
+}
+
+.eyes {
+    background-image: url("src/assets/eyes_atlas.gif");
+    z-index: 2;
+}
+.mouth {
+    background-image: url("src/assets/mouth_atlas.gif");
+    z-index: 3;
+}

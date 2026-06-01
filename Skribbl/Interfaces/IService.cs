@@ -52,5 +52,6 @@ namespace Skribbl.Interfaces
         /// <param name="words"></param>
         void AddWords(string[] words);
 
+        List<Participant> FetchParticipants(string roomId);
     }
 }

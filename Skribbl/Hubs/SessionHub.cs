@@ -7,7 +7,7 @@ namespace Skribbl.Hubs
     public class SessionHub : Hub
     {
         public record CanvasUpdate(string RoomId,double X,double Y,bool IsNewStroke,string Color,int Width);
-        public record SignalRJoinRequest(string RoomId, string Username);
+        public record SignalRJoinRequest(string RoomId, string Username,AvatarOptions AvatarOptions);
 
         IService _sessionService;
 
@@ -16,7 +16,14 @@ namespace Skribbl.Hubs
         public async Task JoinSignalRGroup(SignalRJoinRequest request)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, request.RoomId);
-            await Clients.Group(request.RoomId).SendAsync("PlayerJoined", request.Username);
+            var participant = new Participant
+            {
+                ConnectionId = Context.ConnectionId,
+                Username = request.Username,
+                Score = 0,
+                AvatarOptions = request.AvatarOptions,
+            };
+            await Clients.Group(request.RoomId).SendAsync("PlayerJoined",participant);
             Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} joined group {request.RoomId}");
         }
 

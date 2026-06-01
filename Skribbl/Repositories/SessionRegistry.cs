@@ -1,4 +1,4 @@
-﻿using Skribbl.Interfaces;
+using Skribbl.Interfaces;
 using Skribbl.Models;
 using System.Collections.Concurrent;
 
@@ -10,7 +10,7 @@ namespace Skribbl.Repositories
         private List<string> _words = new List<string>() { "Soare", "Caine", "Braila" };
 
         //roomId - room
-        private ConcurrentDictionary<string, SessionState> _activeGames;
+        private ConcurrentDictionary<string, SessionState> _activeSessions;
 
         //connectionId - roomId
         //rooms can have only unique connection ids
@@ -19,21 +19,21 @@ namespace Skribbl.Repositories
         public SessionRegistry()
         {
             _random = new Random();
-            _activeGames = new ConcurrentDictionary<string, SessionState>();
+            _activeSessions = new ConcurrentDictionary<string, SessionState>();
         }
 
-        public void AddRoom(SessionState gameState)
+        public void AddRoom(SessionState sessionState)
         {
-            _activeGames[gameState.Id] = gameState;
+            _activeSessions[sessionState.Id] = sessionState;
         }
 
-        public void RemoveRoom(SessionState gameState)
+        public void RemoveRoom(SessionState sessionState)
         {
-            _activeGames.TryRemove(gameState.Id, out _);
+            _activeSessions.TryRemove(sessionState.Id, out _);
 
-            var playersToRemove = _connectionIdMap.Where(kvp => kvp.Value == gameState.Id).Select(kvp => kvp.Key).ToList();
+            var participantsToRemove = _connectionIdMap.Where(kvp => kvp.Value == sessionState.Id).Select(kvp => kvp.Key).ToList();
 
-            foreach (var connectionId in playersToRemove)
+            foreach (var connectionId in participantsToRemove)
             {
                 _connectionIdMap.TryRemove(connectionId, out _);
             }
@@ -41,7 +41,7 @@ namespace Skribbl.Repositories
 
         public SessionState? GetRoomByRoomId(string roomId)
         {
-            return _activeGames.GetValueOrDefault(roomId);
+            return _activeSessions.GetValueOrDefault(roomId);
         }
 
         public SessionState? GetRoomByConnectionId(string connectionId)
@@ -54,48 +54,58 @@ namespace Skribbl.Repositories
             return null;
         }
 
-        public Participant? GetPlayer(string connectionId)
+        public List<Participant> FetchParticipants(string roomId)
+        {
+            if(_activeSessions.TryGetValue(roomId, out var room)){
+                return room.Participants;
+            }
+            else
+            {
+                return new List<Participant>();
+            }
+        }
+        public Participant? GetParticipant(string connectionId)
         {
             var room = GetRoomByConnectionId(connectionId);
             if (room == null)
                 return null;
-            var player = room.Players.FirstOrDefault(x => x.ConnectionId == connectionId);
+            var participant = room.Participants.FirstOrDefault(x => x.ConnectionId == connectionId);
 
-            return player;
+            return participant;
         }
 
-        public bool AddPlayerToRoom(string roomId, Participant player)
+        public bool AddParticipantToRoom(string roomId, Participant participant)
         {
             var room = GetRoomByRoomId(roomId);
             if (room == null)
             {
                 return false;
             }
-            lock (room.Players)
+            lock (room.Participants)
             {
-                var playerExisting = room.Players.FirstOrDefault(x => x.Username == player.Username);
-                if (playerExisting != null)
+                var participantExisting = room.Participants.FirstOrDefault(x => x.Username == participant.Username);
+                if (participantExisting != null)
                 {
-                    room.Players.Remove(playerExisting);
+                    room.Participants.Remove(participantExisting);
                 }
 
-                room.Players.Add(player);
-                _connectionIdMap[player.ConnectionId] = roomId;
+                room.Participants.Add(participant);
+                _connectionIdMap[participant.ConnectionId] = roomId;
             }
             return true;
         }
 
-        public bool RemovePlayer(string connectionId)
+        public bool RemoveParticipant(string connectionId)
         {
             var room = GetRoomByConnectionId(connectionId);
             if (room == null)
             {
                 return false;
             }
-            lock (room.Players)
+            lock (room.Participants)
             {
-                room.Players.RemoveAll(x => x.ConnectionId == connectionId);
-                if (room.Players.Count == 0)
+                room.Participants.RemoveAll(x => x.ConnectionId == connectionId);
+                if (room.Participants.Count == 0)
                 {
                     RemoveRoom(room);
                 }

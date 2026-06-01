@@ -9,7 +9,7 @@ function GameHeader(){
     return(
         <div data-component="game-header" className={styles.gameHeader}>
             <img src={clockIcon} className={styles.clock} alt="Clock timer" />
-            <div>{"Round " + currentRound + " of " + totalRounds}</div>
+            <div className={styles.rounds}>{"Round " + currentRound + " of " + totalRounds}</div>
             <div data-component="word" className={styles.word}>
                 <div>DRAW THIS</div>
                 <div>{currentWord}</div>

@@ -36,5 +36,6 @@ namespace Skribbl.Interfaces
         /// <param name="connectionId"></param>
         /// <returns></returns>
         bool RemoveParticipant(string connectionId);
+        List<Participant> FetchParticipants(string roomId);
     }
 }

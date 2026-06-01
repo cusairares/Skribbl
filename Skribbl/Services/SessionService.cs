@@ -6,18 +6,18 @@ namespace Skribbl.Services
 {
     public class SessionService : IService
     {
-        private IRegistry _gameManager;
+        private IRegistry _registryManager;
 
-        public SessionService(IRegistry gameManager)
+        public SessionService(IRegistry registryManager)
         {
-            _gameManager = gameManager;
+            _registryManager = registryManager;
         }
 
         public string CreateRoom()
         {
             var roomId = GenerateUniqueId();
             var newState = new SessionState(roomId);
-            _gameManager.AddRoom(newState);
+            _registryManager.AddRoom(newState);
 
             return roomId;
         }
@@ -27,9 +27,15 @@ namespace Skribbl.Services
             return Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
         }
 
+        public List<Participant> FetchParticipants(string roomId)
+        { 
+            var participants = _registryManager.FetchParticipants(roomId);
+
+            return participants;
+        }
         public bool JoinRoom(string roomId, JoinRoomDto request)
         {
-            var room = _gameManager.GetRoomByRoomId(roomId);
+            var room = _registryManager.GetRoomByRoomId(roomId);
             if (room == null)
             {
                 Console.WriteLine($"[DEBUG] Join failed: Room {roomId} not found.");
@@ -41,15 +47,15 @@ namespace Skribbl.Services
                 Console.WriteLine("[DEBUG] Join failed: Username is null or empty.");
                 return false;
             }
-            var player = new Participant { Username = request.Username, ConnectionId = request.ConnectionId, Score = 0, AvatarOptions = request.AvatarOptions };
-            _gameManager.AddPlayerToRoom(roomId, player);
+            var participant = new Participant { Username = request.Username, ConnectionId = request.ConnectionId, Score = 0, AvatarOptions = request.AvatarOptions };
+            _registryManager.AddParticipantToRoom(roomId, participant);
             return true;
 
         }
 
         public bool LeaveRoom(string connectionId)
         {
-            return _gameManager.RemovePlayer(connectionId);
+            return _registryManager.RemoveParticipant(connectionId);
         }
 
         public Participant GetWinner(string roomId)

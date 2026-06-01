@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Skribbl")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3ee2a6cf65bf2bb36fed87e196ab4af22dbcf443")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21075b8808f80bcd6c56668effa473ac3859f44e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Skribbl")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Skribbl")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
