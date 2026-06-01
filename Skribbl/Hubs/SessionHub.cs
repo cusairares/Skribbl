@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Skribbl.Interfaces;
 using Skribbl.Models;
 
@@ -9,9 +9,9 @@ namespace Skribbl.Hubs
         public record CanvasUpdate(string RoomId,double X,double Y,bool IsNewStroke,string Color,int Width);
         public record SignalRJoinRequest(string RoomId, string Username);
 
-        IService _gameService;
+        IService _sessionService;
 
-        public SessionHub(IService gameService) => _gameService = gameService;
+        public SessionHub(IService sessionService) => _sessionService = sessionService;
 
         public async Task JoinSignalRGroup(SignalRJoinRequest request)
         {
@@ -26,7 +26,7 @@ namespace Skribbl.Hubs
         }
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            _gameService.LeaveRoom(Context.ConnectionId);
+            _sessionService.LeaveRoom(Context.ConnectionId);
             return base.OnDisconnectedAsync(exception);
         }
     }

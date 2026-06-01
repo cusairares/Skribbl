@@ -1,17 +1,17 @@
-﻿using Skribbl.Models;
+using Skribbl.Models;
 
 namespace Skribbl.Interfaces
 {
     public interface IRegistry
     {
         /// <summary>
-        /// Adds the room to the _activeGames dictionary
+        /// Adds the room to the _activeSessions dictionary
         /// </summary>
         /// <param name="room"></param>
         void AddRoom(SessionState room);
 
         /// <summary>
-        /// Removes the room from _activeGames and deletes all entries from _connectionIdMap
+        /// Removes the room from _activeSessions and deletes all entries from _connectionIdMap
         /// </summary>
         /// <param name="room"></param>
         void RemoveRoom(SessionState room);
@@ -20,22 +20,21 @@ namespace Skribbl.Interfaces
 
         SessionState? GetRoomByConnectionId(string connectionId);
 
-        Participant? GetPlayer(string connectionId);
+        Participant? GetParticipant(string connectionId);
 
         /// <summary>
-        /// Adds player to specified room inside _activeGames and updates all entries from _connectionIdMap
+        /// Adds participant to specified room inside _activeSessions and updates all entries from _connectionIdMap
         /// </summary>
         /// <param name="roomId"></param>
-        /// <param name="player"></param>
+        /// <param name="participant"></param>
         /// <returns></returns>
-        bool AddPlayerToRoom(string roomId, Participant player);
+        bool AddParticipantToRoom(string roomId, Participant participant);
 
         /// <summary>
-        /// Removes player from specified room inside _activeGames and deletes all entries from _connectionIdMap
+        /// Removes participant from specified room inside _activeSessions and deletes all entries from _connectionIdMap
         /// </summary>
         /// <param name="connectionId"></param>
         /// <returns></returns>
-        bool RemovePlayer(string connectionId);
-
+        bool RemoveParticipant(string connectionId);
     }
 }

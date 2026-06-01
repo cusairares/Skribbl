@@ -8,31 +8,30 @@ namespace Skribbl.Interfaces
 
 
         /// <summary>
-        /// Creates new GameState
+        /// Creates new SessionState
         /// </summary>
         /// <returns>The RoomId</returns>
         string CreateRoom();
 
         /// <summary>
-        /// Joins specific room with player connectionId, also updates the dictionarys
+        /// Joins specific room with participant connectionId, also updates the dictionarys
         /// </summary>
         /// <param name="roomId"></param>
-        /// <param name="username"></param>
-        /// <param name="connectionId"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         bool JoinRoom(string roomId, JoinRoomDto request);
 
         bool LeaveRoom(string connectionId);
 
         /// <summary>
-        /// Returns the player with highest score
+        /// Returns the participant with highest score
         /// </summary>
         /// <param name="roomId"></param>
         /// <returns></returns>
         Participant GetWinner(string roomId);
 
         /// <summary>
-        /// Explictly adding points for a given player
+        /// Explictly adding points for a given participant
         /// </summary>
         /// <param name="roomId"></param>
         /// <param name="connectionId"></param>
@@ -41,7 +40,7 @@ namespace Skribbl.Interfaces
 
 
         /// <summary>
-        /// Signal to a specific game state to start
+        /// Signal to a specific session state to start
         /// </summary>
         /// <param name="roomId"></param>
         void StartGame(string roomId);
@@ -52,5 +51,6 @@ namespace Skribbl.Interfaces
         /// </summary>
         /// <param name="words"></param>
         void AddWords(string[] words);
+
     }
 }

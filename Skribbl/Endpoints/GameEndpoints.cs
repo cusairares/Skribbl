@@ -10,15 +10,15 @@ namespace Skribbl.Endpoints
 
         public static void MapServiceEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapPost("/api/rooms/create", (IService gameService) =>
+            app.MapPost("/api/rooms/create", (IService sessionService) =>
             {
-                var roomId = gameService.CreateRoom();
+                var roomId = sessionService.CreateRoom();
                 return Results.Ok(new { roomId });
             });
 
-            app.MapPost("/api/rooms/join/{roomId}", (string roomId, JoinRoomDto request, IService gameService) =>
+            app.MapPost("/api/rooms/join/{roomId}", (string roomId, JoinRoomDto request, IService sessionService) =>
             {
-                var success = gameService.JoinRoom(roomId, request);
+                var success = sessionService.JoinRoom(roomId, request);
 
                 return success ? Results.Ok() : Results.BadRequest();
             });

@@ -1,14 +1,14 @@
-﻿using Skribbl.Interfaces;
+using Skribbl.Interfaces;
 
 namespace Skribbl.Models
 {
     ///<summary>
-    ///Class <c>GameRoom</c>  holds  room state
+    ///Class <c>SessionState</c>  holds  room state
     ///</summary>
     public class SessionState
     {
         private string _id;
-        private List<Participant> _players;
+        private List<Participant> _participants;
         private string? _currentWord;
 
         public string Id
@@ -16,10 +16,10 @@ namespace Skribbl.Models
             get => _id;
             set => _id = value;
         }
-        public List<Participant> Players
+        public List<Participant> Participants
         {
-            get => _players;
-            set => _players = value;
+            get => _participants;
+            set => _participants = value;
         }
         public string? CurrentWord
         {
@@ -30,7 +30,7 @@ namespace Skribbl.Models
         public SessionState(string id)
         {
             _id = id;
-            _players = new List<Participant>();
+            _participants = new List<Participant>();
             _currentWord = null;
         }
 
