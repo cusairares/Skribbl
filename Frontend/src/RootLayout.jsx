@@ -1,18 +1,18 @@
 import { Outlet } from "react-router-dom";
-import { SessionProvider } from "./context/Session/SessionProvider";
+import { UserProvider } from "./context/User/UserProvider";
 import { SignalRProvider } from "./context/SignalR/SignalRProvider";
-import { GameProvider } from "./context/Game/GameProvider";
+import { SessionProvider } from "./context/Session/SessionProvider";
 
 export default function RootLayout() {
     return (
-        <SessionProvider>
+        <UserProvider>
             <SignalRProvider>
-                <GameProvider>
+                <SessionProvider>
                      <main>
                         <Outlet/> 
                     </main>
-                </GameProvider>
+                </SessionProvider>
             </SignalRProvider>
-        </SessionProvider>
+        </UserProvider>
     );
 }

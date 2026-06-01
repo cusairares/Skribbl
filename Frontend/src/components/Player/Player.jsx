@@ -1,10 +1,10 @@
 import { useContext } from "react"
 import styles from "./Player.module.css"
-import { SessionContext } from "../../context/Session/SessionContext"
+import { UserContext } from "../../context/User/UserContext"
 
 
 function Player({player,index}){
-    const {getStyle} = useContext(SessionContext)
+    const {getStyle} = useContext(UserContext)
     return(
         <div className={styles.player}>
             <div className={styles.place}>#{index + 1}</div>

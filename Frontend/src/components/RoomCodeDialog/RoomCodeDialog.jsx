@@ -1,8 +1,8 @@
 import { useContext } from "react"
-import { SessionContext } from "../../context/Session/SessionContext"
+import { UserContext } from "../../context/User/UserContext"
 import styles from "./RoomCodeDialog.module.css"
 function RoomCodeDialog({ toggleDialog, handleJoinRoom, isJoining }){
-    const {roomId,updateRoomId} = useContext(SessionContext)
+    const {roomId,updateRoomId} = useContext(UserContext)
 
     return(
         <div data-component="room-code-dialog" className={styles.roomCodeDialog}>

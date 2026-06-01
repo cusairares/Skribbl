@@ -1,9 +1,9 @@
 import { useContext } from "react"
-import { SessionContext } from "../../context/Session/SessionContext"
+import { UserContext } from "../../context/User/UserContext"
 import styles from "./AvatarCustomizer.module.css"
 
 function AvatarCustomizer(){
-    const { avatarOptions,updateAvatarOptions, getStyle } = useContext(SessionContext)
+    const { avatarOptions,updateAvatarOptions, getStyle } = useContext(UserContext)
 
     return(
         <div data-component="avatar-customizer" className={styles.avatarCustomizer}>

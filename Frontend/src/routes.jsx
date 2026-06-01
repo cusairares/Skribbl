@@ -7,7 +7,7 @@ const routes = [
         path: "/",
         element: <RootLayout />,
         children: [
-            { path: "/", element: <Home /> },
+            { path: "/", element: <Home/> },
             { path: "/game/:roomId", element: <Game /> },
         ]
     }

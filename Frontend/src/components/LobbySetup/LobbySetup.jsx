@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { RoomCodeDialog } from "../RoomCodeDialog/RoomCodeDialog"
-import { SessionContext } from "../../context/Session/SessionContext";
+import { UserContext } from "../../context/User/UserContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { SignalRContext } from "../../context/SignalR/SignalRContext";
 import { useNavigate } from "react-router";
@@ -8,7 +8,7 @@ import { AvatarCustomizer } from "../../features/AvatarCustomizer/AvatarCustomiz
 import styles from "./LobbySetup.module.css"
 
 function LobbySetup(){
-    const {username,updateUsername,roomId,updateRoomId,avatarOptions} = useContext(SessionContext)
+    const {username,updateUsername,roomId,updateRoomId,avatarOptions} = useContext(UserContext)
     const {executeJoinRoom} = useContext(SignalRContext)
 
     const [isCreating,setIsCreating] = useState(false)

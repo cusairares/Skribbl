@@ -5,13 +5,14 @@ import { ChatBox } from "../../features/ChatBox/ChatBox"
 import styles  from "./Game.module.css"
 import logo from '../../assets/logo.gif';
 import { ToolTip } from "../../features/ToolTip/ToolTip"
-import { useContext, useEffect, useState } from "react"
-import { SessionContext } from "../../context/Session/SessionContext"
+import { useContext, useEffect } from "react"
+import { UserContext } from "../../context/User/UserContext"
 import { SignalRContext } from "../../context/SignalR/SignalRContext"
+import { SessionContext } from "../../context/Session/SessionContext"
 function Game(){
     const {connection} = useContext(SignalRContext)
-    const {roomId} = useContext(SessionContext)
-    const [players, setPlayers] = useState([]);
+    const {roomId} = useContext(UserContext)
+    const {participants: players, setParticipants: setPlayers} = useContext(SessionContext)
     const baseRoomUrl = import.meta.env.VITE_GAME_URL
     
     useEffect(() => {
