@@ -4,7 +4,7 @@ import { SignalRContext } from "./SignalRContext";
 
 
 function SignalRProvider({children}){
-    const baseRoomUrl = "https://localhost:7064/api/rooms"
+    const baseRoomUrl = `${import.meta.env.VITE_GAME_URL}api/rooms`
     const [connection,setConnection] = useState("");
     const [connectionId,setConnectionId] = useState("");
 
@@ -22,7 +22,8 @@ function SignalRProvider({children}){
         try{
             await connection.invoke("JoinSignalRGroup",{
                 RoomId : targetRoomId,
-                Username : targetUsername
+                Username : targetUsername,
+                AvatarOptions :avatarOptions,
             });
 
             const joinRoomDto = {
@@ -52,7 +53,7 @@ function SignalRProvider({children}){
 
     const getActiveConnection = async(targetUsername,targetRoomId)=>{
         const newConnection = new HubConnectionBuilder()
-                .withUrl("https://localhost:7064/gamehub")
+                .withUrl(`${import.meta.env.VITE_GAME_URL}gamehub`)
                 .build()
         
         updateConnection(newConnection)

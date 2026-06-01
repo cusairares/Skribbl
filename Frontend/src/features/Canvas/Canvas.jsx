@@ -92,25 +92,25 @@ function Canvas() {
       if (!connection) return;
 
       connection.on("CanvasUpdated", (update) => {
-        if (update.IsNewStroke) {
+        if (update.isNewStroke) {
           setLines(prev => [...prev, {
-              points: [update.X, update.Y],
-              stroke: update.Color ?? '#000000',
-              strokeWidth: update.Width ?? 5
+              points: [update.x, update.y],
+              stroke: update.color ?? '#000000',
+              strokeWidth: update.width ?? 5
           }]);
         } 
         else {
           setLines(prev => {
             if (prev.length === 0) {
               return [{
-                points: [update.X, update.Y],
-                stroke: update.Color ?? '#000000',
-                strokeWidth: update.Width ?? 5
+                points: [update.x, update.y],
+                stroke: update.color ?? '#000000',
+                strokeWidth: update.width ?? 5
               }];
             }
             const newLines = [...prev];
             const lastLine = { ...newLines[newLines.length - 1] };
-            lastLine.points = [...(lastLine.points ?? []), update.X, update.Y];
+            lastLine.points = [...(lastLine.points ?? []), update.x, update.y];
             newLines[newLines.length - 1] = lastLine;
             return newLines;
           });

@@ -15,7 +15,7 @@ function LobbySetup(){
     const [isJoining,setIsJoining] = useState(false)
     const [isDialog, setIsDialog] = useState(false)
     const navigate = useNavigate();
-    const baseRoomUrl = "https://localhost:7064/api/rooms"
+    const baseRoomUrl = `${import.meta.env.VITE_GAME_URL}api/rooms`
     
     const handleCreateRoom = async () =>{
         if(!username.trim()) return

@@ -4,13 +4,13 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 
 function SessionProvider({ children }) {
     const features = {
-        color: {cols: 10, rows: 3, total: 28},
-        eyes: {cols: 10, rows: 6, total: 57},
-        mouth: {cols: 10, rows: 6, total: 51},
+        colorIndex: {cols: 10, rows: 3, total: 28},
+        eyesIndex: {cols: 10, rows: 6, total: 57},
+        mouthIndex: {cols: 10, rows: 6, total: 51},
     }
     const [username, setUsername] = useState("");
     const [roomId, setRoomId] = useState("");
-    const [avatarOptions,setAvatarOptions] = useState({color:0,eyes:0,mouth:0});
+    const [avatarOptions,setAvatarOptions] = useState({colorIndex:0,eyesIndex:0,mouthIndex:0});
 
     const updateUsername = (name) => setUsername(name);
     const updateRoomId = (id) => setRoomId(id);
@@ -24,8 +24,9 @@ function SessionProvider({ children }) {
             return {...prev,[featureName]:newIndex}
         })
     }
-    const getStyle = (featureName)=>{
-        const index = avatarOptions[featureName];
+    const getStyle = (avatarOptions, featureName) => {
+        if (!avatarOptions) return {};
+        const index = avatarOptions[featureName] ?? 0;
         const { cols } = features[featureName];
 
         const col = index % cols;
