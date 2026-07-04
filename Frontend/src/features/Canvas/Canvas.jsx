@@ -29,6 +29,7 @@ function Canvas() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  const baseRoomUrl = import.meta.env.VITE_GAME_URL
 
   const handleMouseDown = (e) => {
       isDrawing.current = true;
@@ -88,34 +89,57 @@ function Canvas() {
     isDrawing.current = false;
   };
 
-  useEffect(() => {
-      if (!connection) return;
-
-      connection.on("CanvasUpdated", (update) => {
-        if (update.isNewStroke) {
-          setLines(prev => [...prev, {
-              points: [update.x, update.y],
-              stroke: update.color ?? '#000000',
-              strokeWidth: update.width ?? 5
-          }]);
-        } 
-        else {
-          setLines(prev => {
-            if (prev.length === 0) {
-              return [{
-                points: [update.x, update.y],
-                stroke: update.color ?? '#000000',
-                strokeWidth: update.width ?? 5
-              }];
-            }
-            const newLines = [...prev];
-            const lastLine = { ...newLines[newLines.length - 1] };
-            lastLine.points = [...(lastLine.points ?? []), update.x, update.y];
-            newLines[newLines.length - 1] = lastLine;
-            return newLines;
-          });
+  const fetchCanvas  = async () => {
+      try{
+        const response = await fetch(`${baseRoomUrl}api/${roomId}/fetch_canvas`,{
+          method:"GET"
+        });
+        if(response.ok){
+          const { canvas } = await response.json();
+          if (canvas) {
+            canvas.forEach(update => {
+              handleCanvasUpdate(update)
+            });
+          }
         }
+      }
+      catch(error){
+         console.error("Network error fetching canvas: " + error);
+      }
+  };
+
+  const handleCanvasUpdate = (update) =>{
+    if (update.isNewStroke) {
+      setLines(prev => [...prev, {
+          points: [update.x, update.y],
+          stroke: update.color ?? '#000000',
+          strokeWidth: update.width ?? 5
+      }]);
+    } 
+    else {
+      setLines(prev => {
+        if (prev.length === 0) {
+          return [{
+            points: [update.x, update.y],
+            stroke: update.color ?? '#000000',
+            strokeWidth: update.width ?? 5
+          }];
+        }
+        const newLines = [...prev];
+        const lastLine = { ...newLines[newLines.length - 1] };
+        lastLine.points = [...(lastLine.points ?? []), update.x, update.y];
+        newLines[newLines.length - 1] = lastLine;
+        return newLines;
       });
+    }
+  };
+
+  useEffect(() => {
+    if (!connection) return;
+
+    fetchCanvas();
+
+    connection.on("CanvasUpdated", handleCanvasUpdate);
 
     return () => connection.off("CanvasUpdated");
   }, [connection]);

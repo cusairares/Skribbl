@@ -29,6 +29,13 @@ namespace Skribbl.Endpoints
 
                 return Results.Ok( new { participants });
             });
+
+            app.MapGet("/api/{roomId}/fetch_canvas", (string roomId, IService sessionService) =>
+            {
+                List<CanvasUpdate> canvas = sessionService.FetchCanvasUpdates(roomId);
+
+                return Results.Ok(new { canvas });
+            });
         }
     }
 }

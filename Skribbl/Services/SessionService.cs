@@ -82,5 +82,15 @@ namespace Skribbl.Services
         {
             throw new NotImplementedException();
         }
+
+        public List<CanvasUpdate> FetchCanvasUpdates(string roomId)
+        {
+            return _registryManager.FetchCanvasUpdates(roomId);
+        }
+
+        public void AddCanvasUpdate(CanvasUpdate canvasUpdate)
+        {
+            _registryManager.AddCanvasUpdate(canvasUpdate);
+        }
     }
 }

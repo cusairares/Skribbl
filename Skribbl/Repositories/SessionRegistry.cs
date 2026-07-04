@@ -1,3 +1,4 @@
+using Skribbl.DTO;
 using Skribbl.Interfaces;
 using Skribbl.Models;
 using System.Collections.Concurrent;
@@ -112,6 +113,29 @@ namespace Skribbl.Repositories
                 return _connectionIdMap.TryRemove(connectionId, out _);
             }
 
+        }
+
+        public List<CanvasUpdate> FetchCanvasUpdates(string roomId)
+        {
+            if (_activeSessions.TryGetValue(roomId, out var room))
+            {
+                lock (room.CanvasUpdates)
+                {
+                    return room.CanvasUpdates.ToList();
+                }
+            }
+            return new List<CanvasUpdate>();
+        }
+
+        public void AddCanvasUpdate(CanvasUpdate update)
+        {
+            if (_activeSessions.TryGetValue(update.RoomId, out var room))
+            {
+                lock (room.CanvasUpdates)
+                {
+                    room.CanvasUpdates.Add(update);
+                }
+            }
         }
     }
 }

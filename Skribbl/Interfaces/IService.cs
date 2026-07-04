@@ -52,6 +52,10 @@ namespace Skribbl.Interfaces
         /// <param name="words"></param>
         void AddWords(string[] words);
 
+        void AddCanvasUpdate(CanvasUpdate update);
+
         List<Participant> FetchParticipants(string roomId);
+
+        List<CanvasUpdate> FetchCanvasUpdates(string roomId);
     }
 }

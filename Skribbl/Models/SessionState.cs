@@ -1,3 +1,4 @@
+using Skribbl.DTO;
 using Skribbl.Interfaces;
 
 namespace Skribbl.Models
@@ -9,6 +10,7 @@ namespace Skribbl.Models
     {
         private string _id;
         private List<Participant> _participants;
+        private List<CanvasUpdate> _canvasUpdates;
         private string? _currentWord;
 
         public string Id
@@ -21,6 +23,12 @@ namespace Skribbl.Models
             get => _participants;
             set => _participants = value;
         }
+
+        public List<CanvasUpdate> CanvasUpdates
+        {
+            get => _canvasUpdates;
+            set => _canvasUpdates = value;
+        }
         public string? CurrentWord
         {
             get => _currentWord;
@@ -32,6 +40,7 @@ namespace Skribbl.Models
             _id = id;
             _participants = new List<Participant>();
             _currentWord = null;
+            _canvasUpdates = new List<CanvasUpdate>();
         }
 
         public int CurrentDrawerId { get; set; }

@@ -1,3 +1,4 @@
+using Skribbl.DTO;
 using Skribbl.Models;
 
 namespace Skribbl.Interfaces
@@ -37,5 +38,7 @@ namespace Skribbl.Interfaces
         /// <returns></returns>
         bool RemoveParticipant(string connectionId);
         List<Participant> FetchParticipants(string roomId);
+        List<CanvasUpdate> FetchCanvasUpdates(string roomId);
+        void AddCanvasUpdate(CanvasUpdate update);
     }
 }
