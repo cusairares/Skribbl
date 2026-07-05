@@ -44,9 +44,9 @@ function Game(){
     },[])
     return(
         <div data-component="game" className={styles.gameContainer}>
-            <img className={styles.logo} src={logo}></img>
+            <img className={styles.logo} src={logo} alt="logo" />
             <header className={styles.header}>
-                <GameHeader />
+                <GameStatusBar />
             </header>
             <main data-component="main" className={styles.main}>
                 <PlayerList players={players}></PlayerList>
