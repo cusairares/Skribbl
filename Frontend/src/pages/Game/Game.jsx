@@ -1,34 +1,39 @@
 import { PlayerList } from "../../components/PlayerList/PlayerList"
 import { Canvas } from "../../features/Canvas/Canvas"
-import { GameHeader } from "../../components/GameHeader/GameHeader"
+import { GameStatusBar } from "../../components/GameStatusBar/GameStatusBar"
 import { ChatBox } from "../../features/ChatBox/ChatBox"
 import styles  from "./Game.module.css"
 import logo from '../../assets/logo.gif';
 import { ToolTip } from "../../features/ToolTip/ToolTip"
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { UserContext } from "../../context/User/UserContext"
 import { SignalRContext } from "../../context/SignalR/SignalRContext"
 import { SessionContext } from "../../context/Session/SessionContext"
+import { LobbyWaitingArea } from "../../components/LobbyWaitingArea/LobbyWaitingArea"
+
 function Game(){
     const {connection} = useContext(SignalRContext)
-    const {roomId} = useContext(UserContext)
+    const {roomId, isHost} = useContext(UserContext)
     const {participants: players, setParticipants: setPlayers} = useContext(SessionContext)
+    const [isStarted, setIsStarted] = useState(false)
+    const [isStarting, setIsStarting] = useState(false)
     const baseRoomUrl = import.meta.env.VITE_GAME_URL
     
+    const fetchPlayers = async () => {
+    try {
+        const response = await fetch(baseRoomUrl+ "api/"+ roomId, {
+            method: "GET"
+        });
+        if (response.ok) {
+            const data = await response.json();
+            setPlayers(data.participants ?? []);
+        }
+    } catch (error) {
+        console.error("Network error fetching players: " + error);
+    }
+    };
+
     useEffect(() => {
-        const fetchPlayers = async () => {
-            try {
-                const response = await fetch(baseRoomUrl+ "api/"+ roomId, {
-                    method: "GET"
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setPlayers(data.participants ?? []);
-                }
-            } catch (error) {
-                console.error("Network error fetching players: " + error);
-            }
-        };
         fetchPlayers();
         connection.on("PlayerJoined", (newPlayer) => {
             setPlayers((prev) => prev ? [...prev, newPlayer] : [newPlayer]);
@@ -36,12 +41,28 @@ function Game(){
         connection.on("PlayerDisconnected", (disconnectedId) => {
             setPlayers((prev) => prev ? prev.filter(p => p.connectionId !== disconnectedId) : []);
         });
+        connection.on("GameStarted", () => {
+            setIsStarted(true);
+        });
 
         return () => {
             connection.off("PlayerJoined");
             connection.off("PlayerDisconnected");
+            connection.off("GameStarted");
         };
     },[])
+
+    const handleStartGame = async () => {
+        setIsStarting(true);
+        try {
+            await connection.invoke("StartGame");
+        } catch (error) {
+            console.error("Failed to start game: ", error);
+        } finally {
+            setIsStarting(false);
+        }
+    };
+
     return(
         <div data-component="game" className={styles.gameContainer}>
             <img className={styles.logo} src={logo} alt="logo" />
@@ -51,12 +72,22 @@ function Game(){
             <main data-component="main" className={styles.main}>
                 <PlayerList players={players}></PlayerList>
                 <div data-component="game-draw" className={styles.draw}>
-                    <div className={styles.canvasContainer}>
-                        <Canvas data-component="canvas"></Canvas>
-                    </div>
-                    <div className={styles.toolTipContainer}>
-                        <ToolTip></ToolTip>
-                    </div>
+                    {isStarted ? (
+                        <>
+                            <div className={styles.canvasContainer}>
+                                <Canvas data-component="canvas"></Canvas>
+                            </div>
+                            <div className={styles.toolTipContainer}>
+                                <ToolTip></ToolTip>
+                            </div>
+                        </>
+                    ) : (
+                        <LobbyWaitingArea 
+                            isHost={isHost} 
+                            onStartGame={handleStartGame} 
+                            isStarting={isStarting} 
+                        />
+                    )}
                 </div>
                 <ChatBox></ChatBox>
             </main>
@@ -64,5 +95,5 @@ function Game(){
     )
 }
 
-export {Game}
+export { Game }
 

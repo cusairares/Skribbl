@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Skribbl.DTO;
 using Skribbl.Models;
 
@@ -38,14 +39,6 @@ namespace Skribbl.Interfaces
         /// <param name="newScore"></param>
         bool AddPoints(string roomId, string connectionId, int newScore);
 
-
-        /// <summary>
-        /// Signal to a specific session state to start
-        /// </summary>
-        /// <param name="roomId"></param>
-        void StartGame(string roomId);
-
-
         /// <summary>
         /// Add specific words to the words list
         /// </summary>
@@ -57,5 +50,6 @@ namespace Skribbl.Interfaces
         List<Participant> FetchParticipants(string roomId);
 
         List<CanvasUpdate> FetchCanvasUpdates(string roomId);
+        Task<bool> StartMatchmakingRound(string connectionId);
     }
 }

@@ -40,5 +40,6 @@ namespace Skribbl.Interfaces
         List<Participant> FetchParticipants(string roomId);
         List<CanvasUpdate> FetchCanvasUpdates(string roomId);
         void AddCanvasUpdate(CanvasUpdate update);
+        List<string> FetchWords(string roomId);
     }
 }

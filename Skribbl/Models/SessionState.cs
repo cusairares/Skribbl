@@ -12,12 +12,18 @@ namespace Skribbl.Models
         private List<Participant> _participants;
         private List<CanvasUpdate> _canvasUpdates;
         private string? _currentWord;
+        private List<string> _wordList = new List<string> { "ana", "are", "mere"};
 
         public string Id
         {
             get => _id;
             set => _id = value;
         }
+        public List<string> WordList
+        {
+            get => _wordList;
+        }
+
         public List<Participant> Participants
         {
             get => _participants;

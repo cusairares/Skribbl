@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using Skribbl.DTO;
 using Skribbl.Interfaces;
 

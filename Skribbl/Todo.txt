@@ -1,0 +1,11 @@
+
+BugFix
+1.Fix canvas update for different display
+2.Add disconnect/leave functionality on SessionHub
+
+Feature
+1.Enfore game loop:
+	-random active drawer
+	-set isActive for that participant
+	-trigger game loop
+2.Choose word game loop

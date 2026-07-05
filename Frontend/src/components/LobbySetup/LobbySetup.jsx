@@ -8,7 +8,7 @@ import { AvatarCustomizer } from "../../features/AvatarCustomizer/AvatarCustomiz
 import styles from "./LobbySetup.module.css"
 
 function LobbySetup(){
-    const {username,updateUsername,roomId,updateRoomId,avatarOptions} = useContext(UserContext)
+    const {username,updateUsername,roomId,updateRoomId,avatarOptions,setIsHost} = useContext(UserContext)
     const {executeJoinRoom} = useContext(SignalRContext)
 
     const [isCreating,setIsCreating] = useState(false)
@@ -29,6 +29,7 @@ function LobbySetup(){
 
             let {roomId} = await createRequest.json();
             updateRoomId(roomId)
+            setIsHost(true)
 
             console.log("Room ID received: ", roomId); 
 
@@ -55,6 +56,7 @@ function LobbySetup(){
             return;
         }
         setIsJoining(true)
+        setIsHost(false)
         await executeJoinRoom(roomId,{username, avatarOptions}, navigate)
         setIsJoining(false)
     }

@@ -11,6 +11,7 @@ function UserProvider({ children }) {
     const [username, setUsername] = useState("");
     const [roomId, setRoomId] = useState("");
     const [avatarOptions,setAvatarOptions] = useState({colorIndex:0,eyesIndex:0,mouthIndex:0});
+    const [isHost, setIsHost] = useState(false);
 
     const updateUsername = (name) => setUsername(name);
     const updateRoomId = (id) => setRoomId(id);
@@ -46,7 +47,7 @@ function UserProvider({ children }) {
 
 
     return (
-        <UserContext.Provider value={{ username, updateUsername, roomId, updateRoomId,avatarOptions,updateAvatarOptions,getStyle}}>
+        <UserContext.Provider value={{ username, updateUsername, roomId, updateRoomId,avatarOptions,updateAvatarOptions,getStyle, isHost, setIsHost}}>
             {children}
         </UserContext.Provider>
     );

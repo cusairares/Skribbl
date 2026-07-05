@@ -65,6 +65,18 @@ namespace Skribbl.Repositories
                 return new List<Participant>();
             }
         }
+
+        public List<string> FetchWords(string roomId)
+        {
+            if (_activeSessions.TryGetValue(roomId, out var room))
+            {
+                return room.WordList;
+            }
+            else
+            {
+                return new List<string>();
+            }
+        }
         public Participant? GetParticipant(string connectionId)
         {
             var room = GetRoomByConnectionId(connectionId);

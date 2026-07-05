@@ -27,9 +27,9 @@ namespace Skribbl.Hubs
             Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} joined group {request.RoomId}");
         }
 
-        public async Task SendCanvasUpdate(CanvasUpdate update,IService sessionService)
+        public async Task SendCanvasUpdate(CanvasUpdate update)
         {
-            sessionService.AddCanvasUpdate(update);
+            _sessionService.AddCanvasUpdate(update);
             await Clients.OthersInGroup(update.RoomId).SendAsync("CanvasUpdated", update);
         }
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -41,6 +41,20 @@ namespace Skribbl.Hubs
                 Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} left group {roomId} due to disconnect.");
             }
             await base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task StartGame()
+        {
+            var ok = await _sessionService.StartMatchmakingRound(Context.ConnectionId);
+            var roomId = _sessionService.LeaveRoom(Context.ConnectionId);
+
+            if (ok)
+            {
+                Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} started game.");
+                await Clients.Group(roomId).SendAsync("GameStarted");
+            }
+
+
         }
     }
 }

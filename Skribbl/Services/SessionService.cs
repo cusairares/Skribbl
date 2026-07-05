@@ -1,16 +1,22 @@
+using Microsoft.AspNetCore.SignalR;
 using Skribbl.DTO;
+using Skribbl.Helpers;
+using Skribbl.Hubs;
 using Skribbl.Interfaces;
 using Skribbl.Models;
+using System.Threading.Tasks;
 
 namespace Skribbl.Services
 {
     public class SessionService : IService
     {
-        private IRegistry _registryManager;
+        private readonly IRegistry _registryManager;
+        private readonly IHubContext<SessionHub> _hubContext;
 
-        public SessionService(IRegistry registryManager)
+        public SessionService(IRegistry registryManager, IHubContext<SessionHub> hubContext)
         {
             _registryManager = registryManager;
+            _hubContext = hubContext;
         }
 
         public string CreateRoom()
@@ -80,9 +86,36 @@ namespace Skribbl.Services
             throw new NotImplementedException();
         }
 
-        public void StartGame(string roomId)
+        public async Task<bool> StartMatchmakingRound(string connectionId)
         {
-            throw new NotImplementedException();
+            var room = _registryManager.GetRoomByConnectionId(connectionId);
+            if (room == null)
+            {
+                return false;
+            }
+            room.IsStarted = true;
+            var roomId = room.Id;
+            var drawerConnectionid = GenerateDrawer(roomId);
+            var words =  GenerateWords(roomId);
+            
+            var payload = new RoundPayload(drawerConnectionid, words);
+            await _hubContext.Clients.Group(roomId).SendAsync("RoundGenesisPayload", payload);
+
+            return true;
+        }
+
+        public string GenerateDrawer(string roomId)
+        {
+            var participants = _registryManager.FetchParticipants(roomId);
+            participants.Shuffle();
+            return participants[0].ConnectionId;
+        }
+        public List<string> GenerateWords(string roomId)
+        {
+            var words = _registryManager.FetchWords(roomId);
+            words.Shuffle();
+            return words.Slice(0,3);
+
         }
 
         public void AddWords(string[] words)
