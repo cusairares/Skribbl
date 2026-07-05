@@ -21,7 +21,7 @@ namespace Skribbl.Interfaces
         /// <returns></returns>
         bool JoinRoom(string roomId, JoinRoomDto request);
 
-        bool LeaveRoom(string connectionId);
+        string? LeaveRoom(string connectionId);
 
         /// <summary>
         /// Returns the participant with highest score

@@ -33,9 +33,13 @@ function Game(){
         connection.on("PlayerJoined", (newPlayer) => {
             setPlayers((prev) => prev ? [...prev, newPlayer] : [newPlayer]);
         });
+        connection.on("PlayerDisconnected", (disconnectedId) => {
+            setPlayers((prev) => prev ? prev.filter(p => p.connectionId !== disconnectedId) : []);
+        });
 
         return () => {
             connection.off("PlayerJoined");
+            connection.off("PlayerDisconnected");
         };
     },[])
     return(

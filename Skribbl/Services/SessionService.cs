@@ -53,9 +53,16 @@ namespace Skribbl.Services
 
         }
 
-        public bool LeaveRoom(string connectionId)
+        public string? LeaveRoom(string connectionId)
         {
-            return _registryManager.RemoveParticipant(connectionId);
+            var room = _registryManager.GetRoomByConnectionId(connectionId);
+            if (room == null)
+            {
+                return null;
+            }
+            var roomId = room.Id;
+            _registryManager.RemoveParticipant(connectionId);
+            return roomId;
         }
 
         public Participant GetWinner(string roomId)

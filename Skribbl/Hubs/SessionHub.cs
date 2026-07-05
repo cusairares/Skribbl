@@ -32,10 +32,15 @@ namespace Skribbl.Hubs
             sessionService.AddCanvasUpdate(update);
             await Clients.OthersInGroup(update.RoomId).SendAsync("CanvasUpdated", update);
         }
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            _sessionService.LeaveRoom(Context.ConnectionId);
-            return base.OnDisconnectedAsync(exception);
+            var roomId = _sessionService.LeaveRoom(Context.ConnectionId);
+            if (!string.IsNullOrEmpty(roomId))
+            {
+                await Clients.Group(roomId).SendAsync("PlayerDisconnected", Context.ConnectionId);
+                Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} left group {roomId} due to disconnect.");
+            }
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }
