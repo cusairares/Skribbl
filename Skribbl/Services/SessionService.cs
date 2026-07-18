@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Skribbl.DTO;
 using Skribbl.Helpers;
@@ -95,20 +96,45 @@ namespace Skribbl.Services
             }
             room.IsStarted = true;
             var roomId = room.Id;
-            var drawerConnectionid = GenerateDrawer(roomId);
+            var drawerConnectionid = PickDrawer(roomId);
             var words =  GenerateWords(roomId);
-            
-            var payload = new RoundPayload(drawerConnectionid, words);
-            await _hubContext.Clients.Group(roomId).SendAsync("RoundGenesisPayload", payload);
+
+            await _hubContext.Clients.Group(roomId).SendAsync("GameStarted");
+
+            await _hubContext.Clients.Client(drawerConnectionid).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Drawer", WordList = words });
+            await _hubContext.Clients.GroupExcept(roomId, new[] { drawerConnectionid }).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Guesser", WordList = null });
 
             return true;
         }
 
-        public string GenerateDrawer(string roomId)
+        public async Task<bool> CommitSelectedWord(string connectionId, string word)
         {
+            var room = _registryManager.GetRoomByConnectionId(connectionId);
+            if (room == null)
+            {
+                return false;
+            }
+            room.CurrentWord = word;
+
+            var drawerConnectionId = connectionId;
+            var roomId = room.Id;
+            var maskedWord = string.Join(" ", word.Select(c => c == ' ' ? " " : "_"));
+
+            await _hubContext.Clients.Client(drawerConnectionId).SendAsync("OnTurnStarted", word);
+            
+            await _hubContext.Clients.GroupExcept(roomId, new[] { drawerConnectionId }).SendAsync("OnTurnStarted", maskedWord);
+
+            return true;
+        }
+
+        public string PickDrawer(string roomId)
+        {
+            var room = _registryManager.GetRoomByRoomId(roomId);
             var participants = _registryManager.FetchParticipants(roomId);
             participants.Shuffle();
-            return participants[0].ConnectionId;
+            var drawer = participants[0];
+            room.CurrentDrawerId = drawer.ConnectionId;
+            return drawer.ConnectionId;
         }
         public List<string> GenerateWords(string roomId)
         {

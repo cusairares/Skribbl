@@ -46,15 +46,16 @@ namespace Skribbl.Hubs
         public async Task StartGame()
         {
             var ok = await _sessionService.StartMatchmakingRound(Context.ConnectionId);
-            var roomId = _sessionService.LeaveRoom(Context.ConnectionId);
-
             if (ok)
             {
-                Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} started game.");
-                await Clients.Group(roomId).SendAsync("GameStarted");
+                Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} started game successfully.");
             }
+        }
 
-
+        public async Task SelectWord(string word)
+        {
+            await _sessionService.CommitSelectedWord(Context.ConnectionId, word);
+            Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} selected word: {word}");
         }
     }
 }

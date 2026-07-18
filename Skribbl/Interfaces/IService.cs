@@ -51,5 +51,6 @@ namespace Skribbl.Interfaces
 
         List<CanvasUpdate> FetchCanvasUpdates(string roomId);
         Task<bool> StartMatchmakingRound(string connectionId);
+        Task<bool> CommitSelectedWord(string connectionId, string word);
     }
 }

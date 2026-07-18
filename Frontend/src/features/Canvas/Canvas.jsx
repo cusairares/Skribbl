@@ -3,7 +3,7 @@ import { Stage, Layer, Line } from 'react-konva';
 import { SignalRContext } from "../../context/SignalR/SignalRContext";
 import { UserContext } from '../../context/User/UserContext';
 
-function Canvas() {
+function Canvas({ isDrawer }) {
   const [lines, setLines] = useState([]);
   const isDrawing = useRef(false); 
 
@@ -32,6 +32,7 @@ function Canvas() {
   const baseRoomUrl = import.meta.env.VITE_GAME_URL
 
   const handleMouseDown = (e) => {
+      if (!isDrawer) return;
       isDrawing.current = true;
       const point = e.target.getStage().getPointerPosition();
       
@@ -53,6 +54,7 @@ function Canvas() {
     };
 
   const handleMouseMove = (e) => {
+    if (!isDrawer) return;
     if (!isDrawing.current) return;
 
     const stage = e.target.getStage();

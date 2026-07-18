@@ -5,18 +5,33 @@ import { ChatBox } from "../../features/ChatBox/ChatBox"
 import styles  from "./Game.module.css"
 import logo from '../../assets/logo.gif';
 import { ToolTip } from "../../features/ToolTip/ToolTip"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState, useRef } from "react"
 import { UserContext } from "../../context/User/UserContext"
 import { SignalRContext } from "../../context/SignalR/SignalRContext"
 import { SessionContext } from "../../context/Session/SessionContext"
-import { LobbyWaitingArea } from "../../components/LobbyWaitingArea/LobbyWaitingArea"
+import { WordPicker } from "../../components/WordPicker/WordPicker"
+import { WaitingArea } from "../../components/WaitingArea/WaitingArea"
+import { RoleSplash } from "../../components/RoleSplash/RoleSplash"
+import waitingStyles from "../../components/WaitingArea/WaitingArea.module.css"
 
 function Game(){
     const {connection} = useContext(SignalRContext)
     const {roomId, isHost} = useContext(UserContext)
-    const {participants: players, setParticipants: setPlayers} = useContext(SessionContext)
+    const {
+        participants: players, 
+        setParticipants: setPlayers,
+        role, 
+        setRole,
+        wordOptions, 
+        setWordOptions,
+        isWordSelected, 
+        setIsWordSelected,
+        setCurrentWord
+    } = useContext(SessionContext)
     const [isStarted, setIsStarted] = useState(false)
     const [isStarting, setIsStarting] = useState(false)
+    const [showRoleSplash, setShowRoleSplash] = useState(false)
+    const splashTimerRef = useRef(null)
     const baseRoomUrl = import.meta.env.VITE_GAME_URL
     
     const fetchPlayers = async () => {
@@ -45,13 +60,48 @@ function Game(){
             setIsStarted(true);
         });
 
+        connection.on("OnRoleAssigned", (roleAssignment) => handleRoleAssignment(roleAssignment));
+        connection.on("OnTurnStarted", (word) => {
+            console.log("Turn started with word/mask:", word);
+            setCurrentWord(word);
+            setIsWordSelected(true);
+        });
+
         return () => {
             connection.off("PlayerJoined");
             connection.off("PlayerDisconnected");
             connection.off("GameStarted");
+            connection.off("OnRoleAssigned");
+            connection.off("OnTurnStarted");
+            if (splashTimerRef.current) {
+                clearTimeout(splashTimerRef.current);
+            }
         };
     },[])
 
+    const handleRoleAssignment = (roleAssignment) =>{
+        console.log("Role assigned: ", roleAssignment);
+        setRole(roleAssignment.role);
+        setWordOptions(roleAssignment.wordList || []);
+        setIsWordSelected(false);
+
+        if (splashTimerRef.current) {
+            clearTimeout(splashTimerRef.current);
+        }
+        setShowRoleSplash(true);
+        splashTimerRef.current = setTimeout(() => {
+            setShowRoleSplash(false);
+        }, 2000);
+    }
+
+    const handleSelectWord = async (word) => {
+        try {
+            await connection.invoke("SelectWord", word);
+        } catch (error) {
+            console.error("Failed to select word: ", error);
+        }
+    };
+    
     const handleStartGame = async () => {
         setIsStarting(true);
         try {
@@ -73,19 +123,45 @@ function Game(){
                 <PlayerList players={players}></PlayerList>
                 <div data-component="game-draw" className={styles.draw}>
                     {isStarted ? (
-                        <>
-                            <div className={styles.canvasContainer}>
-                                <Canvas data-component="canvas"></Canvas>
-                            </div>
-                            <div className={styles.toolTipContainer}>
-                                <ToolTip></ToolTip>
-                            </div>
-                        </>
+                        showRoleSplash ? 
+                        (
+                            <RoleSplash role={role} />
+                        ) : !isWordSelected ? (
+                            role === "Drawer" ? (
+                                <WordPicker words={wordOptions} onSelectWord={handleSelectWord} />
+                            ) : (
+                                <WaitingArea 
+                                    title="Round Starting"
+                                    message="Drawer is picking a word..."
+                                    showSpinner={true}
+                                />
+                            )
+                        ) : (
+                            <>
+                                <div className={styles.canvasContainer}>
+                                    <Canvas data-component="canvas" isDrawer={role === "Drawer"}></Canvas>
+                                </div>
+                                <div className={styles.toolTipContainer}>
+                                    <ToolTip></ToolTip>
+                                </div>
+                            </>
+                        )
                     ) : (
-                        <LobbyWaitingArea 
-                            isHost={isHost} 
-                            onStartGame={handleStartGame} 
-                            isStarting={isStarting} 
+                        <WaitingArea 
+                            title="Lobby"
+                            statusText="Waiting for players to join..."
+                            message="Waiting for the host to start the game..."
+                            showSpinner={!isHost}
+                            actionButton={isHost && (
+                                <button
+                                    data-component="button-start-game"
+                                    className={waitingStyles.buttonStart}
+                                    onClick={handleStartGame}
+                                    disabled={isStarting}
+                                >
+                                    {isStarting ? "Starting..." : "Start Game"}
+                                </button>
+                            )}
                         />
                     )}
                 </div>

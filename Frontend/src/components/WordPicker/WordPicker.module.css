@@ -1,0 +1,59 @@
+.wordPickerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-sizing: border-box;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.title {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    text-align: center;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.wordButton {
+    flex: 1;
+    font-size: 1.25rem;
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 20px 32px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    text-align: center;
+}
+
+.wordButton:hover {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: #123595;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(73, 251, 37, 0.4);
+}
+
+.wordButton:active {
+    transform: translateY(-1px);
+}

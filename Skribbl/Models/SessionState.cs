@@ -49,7 +49,7 @@ namespace Skribbl.Models
             _canvasUpdates = new List<CanvasUpdate>();
         }
 
-        public int CurrentDrawerId { get; set; }
+        public string CurrentDrawerId { get; set; }
         public bool IsStarted { get; set; }
     }
 }
