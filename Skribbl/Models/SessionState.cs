@@ -51,5 +51,11 @@ namespace Skribbl.Models
 
         public string CurrentDrawerId { get; set; }
         public bool IsStarted { get; set; }
+        public int CurrentRound { get; set; } = 0;
+        public int TotalRounds { get; set; } = 3;
+        public DateTime? TurnEndTime { get; set; }
+        public bool IsTurnActive { get; set; }
+        public List<string> DrawnPlayerConnectionIds { get; } = new List<string>();
+        public List<string> GuessedCorrectConnectionIds { get; } = new List<string>();
     }
 }

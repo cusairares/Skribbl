@@ -1,4 +1,4 @@
-﻿namespace Skribbl.DTO
+namespace Skribbl.DTO
 {
     public class RoleAssignment
     {

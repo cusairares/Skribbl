@@ -26,7 +26,10 @@ function Game(){
         setWordOptions,
         isWordSelected, 
         setIsWordSelected,
-        setCurrentWord
+        setCurrentWord,
+        setTurnEndTime,
+        setCurrentRound,
+        setTotalRounds
     } = useContext(SessionContext)
     const [isStarted, setIsStarted] = useState(false)
     const [isStarting, setIsStarting] = useState(false)
@@ -60,26 +63,59 @@ function Game(){
             setIsStarted(true);
         });
 
+        connection.on("RoundStarted", (data) => {
+            console.log("Round started:", data);
+            setCurrentRound(data.currentRound);
+            setTotalRounds(data.totalRounds);
+        });
+
         connection.on("OnRoleAssigned", (roleAssignment) => handleRoleAssignment(roleAssignment));
-        connection.on("OnTurnStarted", (word) => {
-            console.log("Turn started with word/mask:", word);
-            setCurrentWord(word);
+        
+        connection.on("OnTurnStarted", (turnState) => {
+            console.log("Turn started payload:", turnState);
+            setCurrentWord(turnState.word);
+            setTurnEndTime(turnState.turnEndTime);
+            setCurrentRound(turnState.currentRound);
+            setTotalRounds(turnState.totalRounds);
             setIsWordSelected(true);
+        });
+
+        connection.on("OnTurnEnded", (data) => {
+            console.log("Turn ended. Word was:", data.word);
+            setCurrentWord(data.word);
+            setTurnEndTime(null);
+        });
+
+        connection.on("GameEnded", (data) => {
+            console.log("Game ended. Winner:", data.winner);
+            setIsStarted(false);
+            setIsWordSelected(false);
+            setRole(null);
+            setCurrentWord("");
+            setTurnEndTime(null);
+        });
+
+        connection.on("UpdatePlayers", (updatedPlayers) => {
+            setPlayers(updatedPlayers);
         });
 
         return () => {
             connection.off("PlayerJoined");
             connection.off("PlayerDisconnected");
             connection.off("GameStarted");
+            connection.off("RoundStarted");
             connection.off("OnRoleAssigned");
             connection.off("OnTurnStarted");
+            connection.off("OnTurnEnded");
+            connection.off("GameEnded");
+            connection.off("UpdatePlayers");
             if (splashTimerRef.current) {
                 clearTimeout(splashTimerRef.current);
             }
         };
-    },[])
+    }, [])
 
-    const handleRoleAssignment = (roleAssignment) =>{
+    const handleRoleAssignment = (roleAssignment) => {
         console.log("Role assigned: ", roleAssignment);
         setRole(roleAssignment.role);
         setWordOptions(roleAssignment.wordList || []);
@@ -92,7 +128,7 @@ function Game(){
         splashTimerRef.current = setTimeout(() => {
             setShowRoleSplash(false);
         }, 2000);
-    }
+    };
 
     const handleSelectWord = async (word) => {
         try {

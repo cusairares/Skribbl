@@ -23,3 +23,19 @@
     margin-left: auto;
     padding-right: 10px;
 }
+
+.timerSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+}
+
+.timerText {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #e53935; /* Premium red accent for alert/time countdown */
+    font-family: inherit;
+    min-width: 32px;
+}
+

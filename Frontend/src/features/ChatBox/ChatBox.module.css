@@ -1,9 +1,0 @@
-.chatBox {
-    background-color: #ebffeb;
-    border: 2px dashed #b3ffb3;
-    padding: 16px;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    border-radius: var(--border-radius);
-}

@@ -50,7 +50,9 @@ namespace Skribbl.Interfaces
         List<Participant> FetchParticipants(string roomId);
 
         List<CanvasUpdate> FetchCanvasUpdates(string roomId);
-        Task<bool> StartMatchmakingRound(string connectionId);
+        Task<bool> StartMatchmakingGame(string connectionId);
         Task<bool> CommitSelectedWord(string connectionId, string word);
+        Task ProgressGame(string roomId);
+        Task EndTurn(string roomId);
     }
 }
