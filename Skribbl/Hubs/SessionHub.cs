@@ -45,7 +45,7 @@ namespace Skribbl.Hubs
 
         public async Task StartGame()
         {
-            var ok = await _sessionService.StartMatchmakingRound(Context.ConnectionId);
+            var ok = await _sessionService.StartMatchmakingGame(Context.ConnectionId);
             if (ok)
             {
                 Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} started game successfully.");
@@ -56,6 +56,26 @@ namespace Skribbl.Hubs
         {
             await _sessionService.CommitSelectedWord(Context.ConnectionId, word);
             Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} selected word: {word}");
+        }
+
+        public async Task SendGuess(MessagePayload payload)
+        {
+            payload.ConnectionId = Context.ConnectionId;
+            var chatMessage = await _sessionService.TryGuess(payload);
+            if (chatMessage != null)
+            {
+                await Clients.Group(payload.RoomId).SendAsync("RecevieMessage", chatMessage);
+            }
+        }
+
+        public async Task SendMessage(MessagePayload payload)
+        {
+            payload.ConnectionId = Context.ConnectionId;
+            var chatMessage = await _sessionService.TryMakeMessage(payload);
+            if (chatMessage != null)
+            {
+                await Clients.Group(payload.RoomId).SendAsync("RecevieMessage", chatMessage);
+            }
         }
     }
 }

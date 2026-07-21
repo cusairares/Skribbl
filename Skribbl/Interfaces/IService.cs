@@ -52,6 +52,8 @@ namespace Skribbl.Interfaces
         List<CanvasUpdate> FetchCanvasUpdates(string roomId);
         Task<bool> StartMatchmakingGame(string connectionId);
         Task<bool> CommitSelectedWord(string connectionId, string word);
+        Task<ChatMessageDto?> TryGuess(MessagePayload payload);
+        Task<ChatMessageDto?> TryMakeMessage(MessagePayload payload);
         Task ProgressGame(string roomId);
         Task EndTurn(string roomId);
     }

@@ -8,9 +8,9 @@ function SessionProvider({ children }) {
     const [participants, setParticipants] = useState([]);
     const [turnEndTime, setTurnEndTime] = useState(null);
     const [role, setRole] = useState(null);
-    const [wordOptions, setWordOptions] = useState([]); // string[]
+    const [wordOptions, setWordOptions] = useState([]);
     const [isWordSelected, setIsWordSelected] = useState(false);
-
+    const [chatMessages,setChatMessages] = useState([]);
     return (
         <SessionContext.Provider value={{ 
             currentWord, setCurrentWord, 
@@ -20,7 +20,8 @@ function SessionProvider({ children }) {
             turnEndTime, setTurnEndTime,
             role, setRole,
             wordOptions, setWordOptions,
-            isWordSelected, setIsWordSelected
+            isWordSelected, setIsWordSelected,
+            chatMessages, setChatMessages
         }}>
             {children}
         </SessionContext.Provider>

@@ -1,7 +1,7 @@
 import { PlayerList } from "../../components/PlayerList/PlayerList"
 import { Canvas } from "../../features/Canvas/Canvas"
 import { GameStatusBar } from "../../components/GameStatusBar/GameStatusBar"
-import { ChatBox } from "../../features/ChatBox/ChatBox"
+import { Chat } from "../../features/Chat/Chat"
 import styles  from "./Game.module.css"
 import logo from '../../assets/logo.gif';
 import { ToolTip } from "../../features/ToolTip/ToolTip"
@@ -201,7 +201,7 @@ function Game(){
                         />
                     )}
                 </div>
-                <ChatBox></ChatBox>
+                <Chat></Chat>
             </main>
         </div>
     )

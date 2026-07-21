@@ -1,0 +1,57 @@
+.historyContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Custom scrollbar for premium look */
+.historyContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.historyContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.historyContainer::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.historyContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.messageRow {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.senderName {
+    font-weight: 700;
+}
+
+.colon {
+    font-weight: 500;
+    color: #666;
+}
+
+.messageText {
+    color: #333;
+}

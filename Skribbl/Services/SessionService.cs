@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Skribbl.DTO;
+using Skribbl.Enums;
 using Skribbl.Helpers;
 using Skribbl.Hubs;
 using Skribbl.Interfaces;
@@ -273,6 +274,75 @@ namespace Skribbl.Services
         public void AddCanvasUpdate(CanvasUpdate canvasUpdate)
         {
             _registryManager.AddCanvasUpdate(canvasUpdate);
+        }
+
+        public async Task<ChatMessageDto?> TryGuess(MessagePayload payload)
+        {
+            var room = _registryManager.GetRoomByConnectionId(payload.ConnectionId);
+            var participant = _registryManager.GetParticipant(payload.ConnectionId);
+            if (room == null || participant == null)
+            {
+                return null;
+            }
+
+            if (room.GuessedCorrectConnectionIds.Contains(payload.ConnectionId))
+            {
+                return null;
+            }
+
+            var selectedWord = room.CurrentWord;
+            if (selectedWord != null)
+            {
+                if (selectedWord.Equals(payload.Message, StringComparison.OrdinalIgnoreCase))
+                {
+                    room.GuessedCorrectConnectionIds.Add(payload.ConnectionId);
+                    participant.Score += 100;
+
+                    var drawer = room.Participants.FirstOrDefault(p => p.ConnectionId == room.CurrentDrawerId);
+                    if (drawer != null)
+                    {
+                        drawer.Score += 50;
+                    }
+
+                    await _hubContext.Clients.Group(room.Id).SendAsync("UpdatePlayers", room.Participants);
+
+                    var guessersCount = room.Participants.Count(p => p.ConnectionId != room.CurrentDrawerId);
+                    if (room.GuessedCorrectConnectionIds.Count >= guessersCount)
+                    {
+                        _ = EndTurn(room.Id);
+                    }
+
+                    return new ChatMessageDto
+                    {
+                        Username = participant.Username,
+                        Message = $"{participant.Username} correctly guessed the word!",
+                        Status = ChatMessageType.CorrectGuess
+                    };
+                }
+            }
+
+            return new ChatMessageDto
+            {
+                Username = participant.Username,
+                Message = payload.Message,
+                Status = ChatMessageType.Default
+            };
+        }
+
+        public Task<ChatMessageDto?> TryMakeMessage(MessagePayload payload)
+        {
+            var participant = _registryManager.GetParticipant(payload.ConnectionId);
+            if (participant == null)
+            {
+                return Task.FromResult<ChatMessageDto?>(null);
+            }
+
+            return Task.FromResult<ChatMessageDto?>(new ChatMessageDto
+            {
+                Username = participant.Username,
+                Message = payload.Message,
+                Status = ChatMessageType.Default
+            });
         }
     }
 }
