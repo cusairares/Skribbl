@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Skribbl.DTO;
 using Skribbl.Models;
@@ -6,8 +7,6 @@ namespace Skribbl.Interfaces
 {
     public interface IService
     {
-
-
         /// <summary>
         /// Creates new SessionState
         /// </summary>
@@ -20,7 +19,7 @@ namespace Skribbl.Interfaces
         /// <param name="roomId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        bool JoinRoom(string roomId, JoinRoomDto request);
+        bool JoinRoom(string roomId, JoinRoomRequest request);
 
         string? LeaveRoom(string connectionId);
 
@@ -52,8 +51,8 @@ namespace Skribbl.Interfaces
         List<CanvasUpdate> FetchCanvasUpdates(string roomId);
         Task<bool> StartMatchmakingGame(string connectionId);
         Task<bool> CommitSelectedWord(string connectionId, string word);
-        Task<ChatMessageDto?> TryGuess(MessagePayload payload);
-        Task<ChatMessageDto?> TryMakeMessage(MessagePayload payload);
+        Task<ChatMessageEvent?> TryGuess(ChatMessageRequest request);
+        Task<ChatMessageEvent?> TryMakeMessage(ChatMessageRequest request);
         Task ProgressGame(string roomId);
         Task EndTurn(string roomId);
     }

@@ -1,6 +1,6 @@
-﻿namespace Skribbl.DTO
+namespace Skribbl.DTO
 {
-    public class MessagePayload
+    public class ChatMessageRequest
     {
         public string RoomId { get; set; }
         public string Message { get; set; }

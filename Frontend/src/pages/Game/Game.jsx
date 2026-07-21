@@ -69,14 +69,14 @@ function Game(){
             setTotalRounds(data.totalRounds);
         });
 
-        connection.on("OnRoleAssigned", (roleAssignment) => handleRoleAssignment(roleAssignment));
+        connection.on("OnRoleAssigned", (roleAssignmentEvent) => handleRoleAssignment(roleAssignmentEvent));
         
-        connection.on("OnTurnStarted", (turnState) => {
-            console.log("Turn started payload:", turnState);
-            setCurrentWord(turnState.word);
-            setTurnEndTime(turnState.turnEndTime);
-            setCurrentRound(turnState.currentRound);
-            setTotalRounds(turnState.totalRounds);
+        connection.on("OnTurnStarted", (turnStartedEvent) => {
+            console.log("Turn started payload:", turnStartedEvent);
+            setCurrentWord(turnStartedEvent.word);
+            setTurnEndTime(turnStartedEvent.turnEndTime);
+            setCurrentRound(turnStartedEvent.currentRound);
+            setTotalRounds(turnStartedEvent.totalRounds);
             setIsWordSelected(true);
         });
 
@@ -115,10 +115,10 @@ function Game(){
         };
     }, [])
 
-    const handleRoleAssignment = (roleAssignment) => {
-        console.log("Role assigned: ", roleAssignment);
-        setRole(roleAssignment.role);
-        setWordOptions(roleAssignment.wordList || []);
+    const handleRoleAssignment = (roleAssignmentEvent) => {
+        console.log("Role assigned: ", roleAssignmentEvent);
+        setRole(roleAssignmentEvent.role);
+        setWordOptions(roleAssignmentEvent.wordList || []);
         setIsWordSelected(false);
 
         if (splashTimerRef.current) {

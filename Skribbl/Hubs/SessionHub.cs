@@ -58,23 +58,23 @@ namespace Skribbl.Hubs
             Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} selected word: {word}");
         }
 
-        public async Task SendGuess(MessagePayload payload)
+        public async Task SendGuess(ChatMessageRequest request)
         {
-            payload.ConnectionId = Context.ConnectionId;
-            var chatMessage = await _sessionService.TryGuess(payload);
+            request.ConnectionId = Context.ConnectionId;
+            var chatMessage = await _sessionService.TryGuess(request);
             if (chatMessage != null)
             {
-                await Clients.Group(payload.RoomId).SendAsync("RecevieMessage", chatMessage);
+                await Clients.Group(request.RoomId).SendAsync("RecevieMessage", chatMessage);
             }
         }
 
-        public async Task SendMessage(MessagePayload payload)
+        public async Task SendMessage(ChatMessageRequest request)
         {
-            payload.ConnectionId = Context.ConnectionId;
-            var chatMessage = await _sessionService.TryMakeMessage(payload);
+            request.ConnectionId = Context.ConnectionId;
+            var chatMessage = await _sessionService.TryMakeMessage(request);
             if (chatMessage != null)
             {
-                await Clients.Group(payload.RoomId).SendAsync("RecevieMessage", chatMessage);
+                await Clients.Group(request.RoomId).SendAsync("RecevieMessage", chatMessage);
             }
         }
     }

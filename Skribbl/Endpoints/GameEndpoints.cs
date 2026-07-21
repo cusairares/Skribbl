@@ -17,7 +17,7 @@ namespace Skribbl.Endpoints
                 return Results.Ok(new { roomId });
             });
 
-            app.MapPost("/api/rooms/join/{roomId}", (string roomId, JoinRoomDto request, IService sessionService) =>
+            app.MapPost("/api/rooms/join/{roomId}", (string roomId, JoinRoomRequest request, IService sessionService) =>
             {
                 var success = sessionService.JoinRoom(roomId, request);
 

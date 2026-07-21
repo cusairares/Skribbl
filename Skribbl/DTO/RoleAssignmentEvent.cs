@@ -1,6 +1,6 @@
 namespace Skribbl.DTO
 {
-    public class RoleAssignment
+    public class RoleAssignmentEvent
     {
         public string Role { get; set; }
 

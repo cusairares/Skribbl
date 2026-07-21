@@ -15,8 +15,8 @@ function Chat() {
     useEffect(() => {
         if (!connection) return;
 
-        const handleRecevieMessage = (messagePayload) => {
-            setChatMessages((prev) => [...prev, messagePayload]);
+        const handleRecevieMessage = (chatMessageEvent) => {
+            setChatMessages((prev) => [...prev, chatMessageEvent]);
         };
 
         connection.on("RecevieMessage", handleRecevieMessage);
@@ -27,12 +27,12 @@ function Chat() {
     }, [connection, setChatMessages]);
     
     const handleSendMessage = (value) => {
-        const messagePayload = { roomId: roomId, message: value };
+        const chatMessageRequest = { roomId: roomId, message: value };
         if (isWordSelected && role == "Guesser") {
-            connection.invoke("SendGuess", messagePayload);
+            connection.invoke("SendGuess", chatMessageRequest);
         }
         else {
-            connection.invoke("SendMessage", messagePayload);
+            connection.invoke("SendMessage", chatMessageRequest);
         }
     };
 

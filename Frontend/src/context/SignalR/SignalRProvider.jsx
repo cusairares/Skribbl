@@ -11,11 +11,11 @@ function SignalRProvider({children}){
     const updateConnection = (connection) => setConnection(connection)
     const updateConnectionId = (connectionId) => setConnectionId(connectionId)
 
-    const executeJoinRoom = async(targetRoomId, joinPayload, navigate)=>{
+    const executeJoinRoom = async(targetRoomId, joinRoomRequest, navigate)=>{
         if(!targetRoomId.trim()) return
 
-        const targetUsername = joinPayload.username;
-        const avatarOptions = joinPayload.avatarOptions;
+        const targetUsername = joinRoomRequest.username;
+        const avatarOptions = joinRoomRequest.avatarOptions;
 
         const connection = await getActiveConnection(targetUsername,targetRoomId)
 
@@ -26,7 +26,7 @@ function SignalRProvider({children}){
                 AvatarOptions :avatarOptions,
             });
 
-            const joinRoomDto = {
+            const joinRoomRequestBody = {
                 Username: targetUsername.trim(),
                 ConnectionId: connection.connectionId,
                 AvatarOptions: avatarOptions
@@ -35,7 +35,7 @@ function SignalRProvider({children}){
             const joinRequest = await fetch(baseRoomUrl + `/join/${targetRoomId}`,{
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(joinRoomDto)
+                body: JSON.stringify(joinRoomRequestBody)
             })
             
             if(joinRequest.ok){

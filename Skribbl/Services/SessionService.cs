@@ -41,7 +41,7 @@ namespace Skribbl.Services
 
             return participants;
         }
-        public bool JoinRoom(string roomId, JoinRoomDto request)
+        public bool JoinRoom(string roomId, JoinRoomRequest request)
         {
             var room = _registryManager.GetRoomByRoomId(roomId);
             if (room == null)
@@ -111,8 +111,8 @@ namespace Skribbl.Services
             await _hubContext.Clients.Group(roomId).SendAsync("GameStarted");
             await _hubContext.Clients.Group(roomId).SendAsync("RoundStarted", new { CurrentRound = room.CurrentRound, TotalRounds = room.TotalRounds });
 
-            await _hubContext.Clients.Client(drawerConnectionid).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Drawer", WordList = words });
-            await _hubContext.Clients.GroupExcept(roomId, new[] { drawerConnectionid }).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Guesser", WordList = null });
+            await _hubContext.Clients.Client(drawerConnectionid).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Drawer", WordList = words });
+            await _hubContext.Clients.GroupExcept(roomId, new[] { drawerConnectionid }).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Guesser", WordList = null });
 
             return true;
         }
@@ -192,8 +192,8 @@ namespace Skribbl.Services
             if (nextDrawerConnectionId != null)
             {
                 var words = GenerateWords(roomId);
-                await _hubContext.Clients.Client(nextDrawerConnectionId).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Drawer", WordList = words });
-                await _hubContext.Clients.GroupExcept(roomId, new[] { nextDrawerConnectionId }).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Guesser", WordList = null });
+                await _hubContext.Clients.Client(nextDrawerConnectionId).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Drawer", WordList = words });
+                await _hubContext.Clients.GroupExcept(roomId, new[] { nextDrawerConnectionId }).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Guesser", WordList = null });
             }
             else
             {
@@ -228,8 +228,8 @@ namespace Skribbl.Services
                         var words = GenerateWords(roomId);
                         await _hubContext.Clients.Group(roomId).SendAsync("RoundStarted", new { CurrentRound = room.CurrentRound, TotalRounds = room.TotalRounds });
                         
-                        await _hubContext.Clients.Client(firstDrawerConnectionId).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Drawer", WordList = words });
-                        await _hubContext.Clients.GroupExcept(roomId, new[] { firstDrawerConnectionId }).SendAsync("OnRoleAssigned", new RoleAssignment { Role = "Guesser", WordList = null });
+                        await _hubContext.Clients.Client(firstDrawerConnectionId).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Drawer", WordList = words });
+                        await _hubContext.Clients.GroupExcept(roomId, new[] { firstDrawerConnectionId }).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Guesser", WordList = null });
                     }
                 }
             }
@@ -276,16 +276,16 @@ namespace Skribbl.Services
             _registryManager.AddCanvasUpdate(canvasUpdate);
         }
 
-        public async Task<ChatMessageDto?> TryGuess(MessagePayload payload)
+        public async Task<ChatMessageEvent?> TryGuess(ChatMessageRequest request)
         {
-            var room = _registryManager.GetRoomByConnectionId(payload.ConnectionId);
-            var participant = _registryManager.GetParticipant(payload.ConnectionId);
+            var room = _registryManager.GetRoomByConnectionId(request.ConnectionId);
+            var participant = _registryManager.GetParticipant(request.ConnectionId);
             if (room == null || participant == null)
             {
                 return null;
             }
 
-            if (room.GuessedCorrectConnectionIds.Contains(payload.ConnectionId))
+            if (room.GuessedCorrectConnectionIds.Contains(request.ConnectionId))
             {
                 return null;
             }
@@ -293,9 +293,9 @@ namespace Skribbl.Services
             var selectedWord = room.CurrentWord;
             if (selectedWord != null)
             {
-                if (selectedWord.Equals(payload.Message, StringComparison.OrdinalIgnoreCase))
+                if (selectedWord.Equals(request.Message, StringComparison.OrdinalIgnoreCase))
                 {
-                    room.GuessedCorrectConnectionIds.Add(payload.ConnectionId);
+                    room.GuessedCorrectConnectionIds.Add(request.ConnectionId);
                     participant.Score += 100;
 
                     var drawer = room.Participants.FirstOrDefault(p => p.ConnectionId == room.CurrentDrawerId);
@@ -312,7 +312,7 @@ namespace Skribbl.Services
                         _ = EndTurn(room.Id);
                     }
 
-                    return new ChatMessageDto
+                    return new ChatMessageEvent
                     {
                         Username = participant.Username,
                         Message = $"{participant.Username} correctly guessed the word!",
@@ -321,27 +321,27 @@ namespace Skribbl.Services
                 }
             }
 
-            return new ChatMessageDto
+            return new ChatMessageEvent
             {
-                Username = participant.Username,
-                Message = payload.Message,
-                Status = ChatMessageType.Default
+                Status = ChatMessageType.Default,
+                Message = request.Message,
+                Username = participant.Username
             };
         }
 
-        public Task<ChatMessageDto?> TryMakeMessage(MessagePayload payload)
+        public Task<ChatMessageEvent?> TryMakeMessage(ChatMessageRequest request)
         {
-            var participant = _registryManager.GetParticipant(payload.ConnectionId);
+            var participant = _registryManager.GetParticipant(request.ConnectionId);
             if (participant == null)
             {
-                return Task.FromResult<ChatMessageDto?>(null);
+                return Task.FromResult<ChatMessageEvent?>(null);
             }
 
-            return Task.FromResult<ChatMessageDto?>(new ChatMessageDto
+            return Task.FromResult<ChatMessageEvent?>(new ChatMessageEvent
             {
-                Username = participant.Username,
-                Message = payload.Message,
-                Status = ChatMessageType.Default
+                Status = ChatMessageType.Default,
+                Message = request.Message,
+                Username = participant.Username
             });
         }
     }
