@@ -1,10 +1,8 @@
-import { useContext } from "react"
 import styles from "./Player.module.css"
-import { UserContext } from "../../context/User/UserContext"
-
+import { useAvatarOptions } from "../../hooks/useAvatarOptions"
 
 function Player({player,index}){
-    const {getStyle} = useContext(UserContext)
+    const {getStyle} = useAvatarOptions();
     return(
         <div className={styles.player}>
             <div className={styles.place}>#{index + 1}</div>

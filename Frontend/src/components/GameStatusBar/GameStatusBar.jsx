@@ -7,6 +7,13 @@ import settingsIcon from "../../assets/settings.gif"
 function GameStatusBar() {
     const { currentWord, currentRound, totalRounds, turnEndTime } = useContext(SessionContext)
     const [secondsLeft, setSecondsLeft] = useState(0)
+    
+    const updateTimer = (endTime) => {
+        const now = Date.now()
+        const diff = endTime - now
+        const remaining = Math.max(0, Math.ceil(diff / 1000))
+        setSecondsLeft(remaining)
+    };
 
     useEffect(() => {
         if (!turnEndTime) {
@@ -16,14 +23,7 @@ function GameStatusBar() {
 
         const endTime = new Date(turnEndTime).getTime()
 
-        const updateTimer = () => {
-            const now = Date.now()
-            const diff = endTime - now
-            const remaining = Math.max(0, Math.ceil(diff / 1000))
-            setSecondsLeft(remaining)
-        };
-
-        updateTimer()
+        updateTimer(endTime)
 
         const intervalId = setInterval(updateTimer, 200)
 

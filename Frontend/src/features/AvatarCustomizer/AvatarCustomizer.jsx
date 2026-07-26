@@ -1,9 +1,8 @@
-import { useContext } from "react"
-import { UserContext } from "../../context/User/UserContext"
 import styles from "./AvatarCustomizer.module.css"
+import { useAvatarOptions } from "../../hooks/useAvatarOptions"
 
 function AvatarCustomizer(){
-    const { avatarOptions,updateAvatarOptions, getStyle } = useContext(UserContext)
+    const {updateAvatarOptions, getStyle } = useAvatarOptions();
 
     return(
         <div data-component="avatar-customizer" className={styles.avatarCustomizer}>
@@ -13,9 +12,9 @@ function AvatarCustomizer(){
                 <div className={styles.arrow} onClick={() => updateAvatarOptions('colorIndex', 'left')}></div>
             </div>
             <div className={styles.avatar}>
-                <div className={styles.eyes} style={getStyle(avatarOptions,'eyesIndex')}></div>
-                <div className={styles.mouth} style={getStyle(avatarOptions,'mouthIndex')}></div>
-                <div className={styles.color} style={getStyle(avatarOptions,'colorIndex')}></div>
+                <div className={styles.eyes} style={getStyle('eyesIndex')}></div>
+                <div className={styles.mouth} style={getStyle('mouthIndex')}></div>
+                <div className={styles.color} style={getStyle('colorIndex')}></div>
             </div>
             <div className={styles.containerRight}>
                 <div className={styles.arrow} onClick={() => updateAvatarOptions('eyesIndex', 'right')}></div>

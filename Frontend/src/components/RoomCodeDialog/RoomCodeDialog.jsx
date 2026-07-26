@@ -1,8 +1,8 @@
-import { useContext } from "react"
-import { UserContext } from "../../context/User/UserContext"
+import { useGameStore } from "../../hooks/useGameStore";
 import styles from "./RoomCodeDialog.module.css"
 function RoomCodeDialog({ toggleDialog, handleJoinRoom, isJoining }){
-    const {roomId,updateRoomId} = useContext(UserContext)
+    const roomId = useGameStore((state) => state.roomId)
+    const updateRoomId = useGameStore((state) => state.updateRoomId);
 
     return(
         <div data-component="room-code-dialog" className={styles.roomCodeDialog}>

@@ -10,6 +10,7 @@ function SessionProvider({ children }) {
     const [role, setRole] = useState(null);
     const [wordOptions, setWordOptions] = useState([]);
     const [isWordSelected, setIsWordSelected] = useState(false);
+    const [isTurnActive, setIsTurnActive] = useState(false);
     const [chatMessages,setChatMessages] = useState([]);
     return (
         <SessionContext.Provider value={{ 
@@ -21,6 +22,7 @@ function SessionProvider({ children }) {
             role, setRole,
             wordOptions, setWordOptions,
             isWordSelected, setIsWordSelected,
+            isTurnActive, setIsTurnActive,
             chatMessages, setChatMessages
         }}>
             {children}

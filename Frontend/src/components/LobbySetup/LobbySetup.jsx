@@ -1,71 +1,16 @@
-import { useContext, useState } from "react"
 import { RoomCodeDialog } from "../RoomCodeDialog/RoomCodeDialog"
-import { UserContext } from "../../context/User/UserContext";
+
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { SignalRContext } from "../../context/SignalR/SignalRContext";
-import { useNavigate } from "react-router";
 import { AvatarCustomizer } from "../../features/AvatarCustomizer/AvatarCustomizer";
 import styles from "./LobbySetup.module.css"
+import { useLobby } from "../../hooks/useLobby";
+import { useGameStore } from "../../hooks/useGameStore";
 
 function LobbySetup(){
-    const {username,updateUsername,roomId,updateRoomId,avatarOptions,setIsHost} = useContext(UserContext)
-    const {executeJoinRoom} = useContext(SignalRContext)
+    const username = useGameStore((state) => state.username);
+    const updateUsername = useGameStore((state) => state.updateUsername)
 
-    const [isCreating,setIsCreating] = useState(false)
-    const [isJoining,setIsJoining] = useState(false)
-    const [isDialog, setIsDialog] = useState(false)
-    const navigate = useNavigate();
-    const baseRoomUrl = `${import.meta.env.VITE_GAME_URL}api/rooms`
-    
-    const handleCreateRoom = async () =>{
-        if(!username.trim()) return
-
-        setIsCreating(true)
-
-        try{
-            const createRequest= await fetch(baseRoomUrl + '/create', { 
-                method: 'POST' 
-            });
-
-            let {roomId} = await createRequest.json();
-            updateRoomId(roomId)
-            setIsHost(true)
-
-            console.log("Room ID received: ", roomId); 
-
-            if(createRequest.ok){
-                console.log("Successfully created room:", roomId);
-                executeJoinRoom(roomId, { username, avatarOptions }, navigate)
-            }
-            else{
-                console.error("Failed to create the room.");
-            }
-        }
-        catch(error){
-            console.error("Network error:", error);
-        }
-        finally{
-            setIsCreating(false)
-        }
-
-    }
-
-    const handleJoinRoom = async () =>{
-        if(!roomId || !roomId.trim()){
-            toggleDialog();
-            return;
-        }
-        setIsJoining(true)
-        setIsHost(false)
-        await executeJoinRoom(roomId,{username, avatarOptions}, navigate)
-        setIsJoining(false)
-    }
-
-    const toggleDialog = () =>{
-        setIsDialog(prevState =>
-            !prevState
-        )
-    }
+    const {handleCreateRoom,handleJoinRoom,toggleDialog,isDialog,isJoining,isCreating} = useLobby();
 
     if (isDialog) {
         return (
