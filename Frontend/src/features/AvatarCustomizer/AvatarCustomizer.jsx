@@ -1,8 +1,9 @@
 import styles from "./AvatarCustomizer.module.css"
-import { useAvatarOptions } from "../../hooks/useAvatarOptions"
+import { useAvatarOptions, getAvatarStyle } from "../../hooks/useAvatarOptions"
 
 function AvatarCustomizer(){
-    const {updateAvatarOptions, getStyle } = useAvatarOptions();
+    const avatarOptions = useAvatarOptions(state => state.avatarOptions);
+    const updateAvatarOptions = useAvatarOptions(state => state.updateAvatarOptions);
 
     return(
         <div data-component="avatar-customizer" className={styles.avatarCustomizer}>
@@ -12,9 +13,9 @@ function AvatarCustomizer(){
                 <div className={styles.arrow} onClick={() => updateAvatarOptions('colorIndex', 'left')}></div>
             </div>
             <div className={styles.avatar}>
-                <div className={styles.eyes} style={getStyle('eyesIndex')}></div>
-                <div className={styles.mouth} style={getStyle('mouthIndex')}></div>
-                <div className={styles.color} style={getStyle('colorIndex')}></div>
+                <div className={styles.eyes} style={getAvatarStyle(avatarOptions, 'eyesIndex')}></div>
+                <div className={styles.mouth} style={getAvatarStyle(avatarOptions, 'mouthIndex')}></div>
+                <div className={styles.color} style={getAvatarStyle(avatarOptions, 'colorIndex')}></div>
             </div>
             <div className={styles.containerRight}>
                 <div className={styles.arrow} onClick={() => updateAvatarOptions('eyesIndex', 'right')}></div>

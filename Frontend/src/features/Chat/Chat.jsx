@@ -1,16 +1,21 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import styles from "./Chat.module.css";
-import { SessionContext } from "../../context/Session/SessionContext";
 import { ChatHistory } from "../../components/ChatHistory/ChatHistory";
 import { ChatBox } from "../../components/ChatBox/ChatBox";
-import { useGameStore } from "../../hooks/useGameStore";
+import { useSessionStore } from "../../hooks/useSessionStore";
+import { useChatStore } from "../../hooks/useChatStore";
+import { useWordStore } from "../../hooks/useWordStore";
+import { useRoundStore } from "../../hooks/useRoundStore";
 import { useSignalRStore } from "../../hooks/useSignalRStore";
 
 function Chat() {
     const connection = useSignalRStore((state) => state.connection)
-    const { chatMessages, setChatMessages } = useContext(SessionContext);
-    const { isWordSelected, role } = useContext(SessionContext);
-    const roomId = useGameStore((state) => state.roomId)
+    const chatMessages = useChatStore((state) => state.chatMessages);
+    const setChatMessages = useChatStore((state) => state.setChatMessages);
+    
+    const isWordSelected = useWordStore((state) => state.isWordSelected);
+    const role = useRoundStore((state) => state.role);
+    const roomId = useSessionStore((state) => state.roomId)
 
     useEffect(() => {
         if (!connection) return;

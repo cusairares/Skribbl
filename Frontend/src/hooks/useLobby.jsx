@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAvatarOptions } from "./useAvatarOptions";
-import { useGameStore } from "./useGameStore";
+import { useSessionStore } from "./useSessionStore";
 import { useSignalRStore } from "./useSignalRStore";
 
 export const useLobby = ()=> 
 {
     const baseRoomUrl = `${import.meta.env.VITE_GAME_URL}api/rooms`
 
-    const username =   useGameStore((state) => state.username);
-    const roomId = useGameStore((state) => state.roomId)
-    const updateRoomId = useGameStore((state) => state.updateRoomId)
-    const updateHost = useGameStore((state) => state.updateHost)
+    const username = useSessionStore((state) => state.username);
+    const roomId = useSessionStore((state) => state.roomId)
+    const updateRoomId = useSessionStore((state) => state.updateRoomId)
+    const updateHost = useSessionStore((state) => state.updateHost)
 
-    const { avatarOptions } = useAvatarOptions();
+    const avatarOptions = useAvatarOptions((state) => state.avatarOptions);
     const joinRoom = useSignalRStore((state) => state.joinRoom)
     const navigate = useNavigate();
 

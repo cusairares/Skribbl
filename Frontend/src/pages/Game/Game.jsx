@@ -5,41 +5,60 @@ import { Chat } from "../../features/Chat/Chat"
 import styles  from "./Game.module.css"
 import logo from '../../assets/logo.gif';
 import { ToolTip } from "../../features/ToolTip/ToolTip"
-import { useContext, useEffect, useRef } from "react"
-import { SessionContext } from "../../context/Session/SessionContext"
+import { useEffect, useRef, useState } from "react"
 import { WordPicker } from "../../components/WordPicker/WordPicker"
 import { WaitingArea } from "../../components/WaitingArea/WaitingArea"
 import { RoleSplash } from "../../components/RoleSplash/RoleSplash"
 import waitingStyles from "../../components/WaitingArea/WaitingArea.module.css"
-import { useGameStore } from "../../hooks/useGameStore"
-import { useGameUI } from "../../hooks/useGameUI"
+import { useSessionStore } from "../../hooks/useSessionStore"
+import { useRoundStore } from "../../hooks/useRoundStore"
+import { useWordStore } from "../../hooks/useWordStore"
+
 import { useSignalRStore } from "../../hooks/useSignalRStore"
 
 function Game(){
     const connection = useSignalRStore((state) => state.connection)
-    const roomId = useGameStore((state) => state.roomId);
-    const isHost = useGameStore((state) => state.isHost)
+    const roomId = useSessionStore((state) => state.roomId);
+    const isHost = useSessionStore((state) => state.isHost);
+    const participants = useSessionStore((state) => state.participants);
+    const setParticipants = useSessionStore((state) => state.setParticipants);
 
-    const {isGameStarted,setIsGameStarted,isStarting,setIsStarting,showRoleSplash,setShowRoleSplash} = useGameUI();
+    const role = useRoundStore((state) => state.role);
+    const setRole = useRoundStore((state) => state.setRole);
+    const setCurrentRound = useRoundStore((state) => state.setCurrentRound);
+    const setTotalRounds = useRoundStore((state) => state.setTotalRounds);
+    const setTurnEndTime = useRoundStore((state) => state.setTurnEndTime);
+    const setIsTurnActive = useRoundStore((state) => state.setIsTurnActive);
+
+    const wordOptions = useWordStore((state) => state.wordOptions);
+    const setWordOptions = useWordStore((state) => state.setWordOptions);
+    const isWordSelected = useWordStore((state) => state.isWordSelected);
+    const setIsWordSelected = useWordStore((state) => state.setIsWordSelected);
+    const setCurrentWord = useWordStore((state) => state.setCurrentWord);
+
+    const isGameStarted = useSessionStore((state) => state.isGameStarted);
+    const setIsGameStarted = useSessionStore((state) => state.setIsGameStarted);
+    const showRoleSplash = useRoundStore((state) => state.showRoleSplash);
+    const setShowRoleSplash = useRoundStore((state) => state.setShowRoleSplash);
+    const [isStarting, setIsStarting] = useState(false);
     
-    const {
-        participants, 
-        setParticipants,
-        role, 
-        setRole,
-        wordOptions, 
-        setWordOptions,
-        isWordSelected, 
-        setIsWordSelected,
-        setCurrentWord,
-        setTurnEndTime,
-        setCurrentRound,
-        setTotalRounds,
-        setIsTurnActive
-    } = useContext(SessionContext)
     const splashTimerRef = useRef(null)
 
     useEffect(() => {
+        const fetchInitialParticipants = async () => {
+            if (!roomId) return;
+            try {
+                const response = await fetch(`${import.meta.env.VITE_GAME_URL}api/${roomId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setParticipants(data.participants || []);
+                }
+            } catch (error) {
+                console.error("Failed to fetch initial participants:", error);
+            }
+        };
+        fetchInitialParticipants();
+
         connection.on("PlayerJoined", (newPlayer) => {
             setParticipants((prev) => prev ? [...prev, newPlayer] : [newPlayer]);
         });

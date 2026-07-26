@@ -1,8 +1,8 @@
-import { useGameStore } from "../../hooks/useGameStore";
+import { useSessionStore } from "../../hooks/useSessionStore";
 import styles from "./RoomCodeDialog.module.css"
 function RoomCodeDialog({ toggleDialog, handleJoinRoom, isJoining }){
-    const roomId = useGameStore((state) => state.roomId)
-    const updateRoomId = useGameStore((state) => state.updateRoomId);
+    const roomId = useSessionStore((state) => state.roomId)
+    const updateRoomId = useSessionStore((state) => state.updateRoomId);
 
     return(
         <div data-component="room-code-dialog" className={styles.roomCodeDialog}>

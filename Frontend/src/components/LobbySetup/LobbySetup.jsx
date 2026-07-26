@@ -4,11 +4,11 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import { AvatarCustomizer } from "../../features/AvatarCustomizer/AvatarCustomizer";
 import styles from "./LobbySetup.module.css"
 import { useLobby } from "../../hooks/useLobby";
-import { useGameStore } from "../../hooks/useGameStore";
+import { useSessionStore } from "../../hooks/useSessionStore";
 
 function LobbySetup(){
-    const username = useGameStore((state) => state.username);
-    const updateUsername = useGameStore((state) => state.updateUsername)
+    const username = useSessionStore((state) => state.username);
+    const updateUsername = useSessionStore((state) => state.updateUsername)
 
     const {handleCreateRoom,handleJoinRoom,toggleDialog,isDialog,isJoining,isCreating} = useLobby();
 

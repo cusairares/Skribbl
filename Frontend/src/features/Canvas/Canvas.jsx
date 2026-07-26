@@ -1,6 +1,6 @@
 import React, { useState, useRef ,useEffect} from 'react';
 import { Stage, Layer, Line } from 'react-konva';
-import { useGameStore } from '../../hooks/useGameStore';
+import { useSessionStore } from '../../hooks/useSessionStore';
 import { useSignalRStore } from '../../hooks/useSignalRStore';
 
 function Canvas({ isDrawer }) {
@@ -8,7 +8,7 @@ function Canvas({ isDrawer }) {
   const isDrawing = useRef(false); 
 
   const connection = useSignalRStore((state) => state.connection)
-  const roomId = useGameStore((state) => state.roomId)
+  const roomId = useSessionStore((state) => state.roomId)
   const lastSentTime = useRef(0);
 
   const containerRef = useRef(null);
