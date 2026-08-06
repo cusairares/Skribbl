@@ -24,6 +24,7 @@ namespace Skribbl.Hubs
                 AvatarOptions = request.AvatarOptions,
             };
             await Clients.Group(request.RoomId).SendAsync("PlayerJoined",participant);
+           
             Console.WriteLine($"[SIGNALR] Connection {Context.ConnectionId} joined group {request.RoomId}");
         }
 
