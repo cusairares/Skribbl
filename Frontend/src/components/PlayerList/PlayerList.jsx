@@ -1,7 +1,7 @@
 import styles from "./PlayerList.module.css";
 import { Player } from "../Player/Player";
-function PlayerList({ players = [] }) {
-    const sortedPlayers = [...players].sort((a, b) => {
+function PlayerList({ participants = [] }) {
+    const sortedPlayers = [...participants].sort((a, b) => {
         const scoreA = a.score !== undefined ? a.score : 0;
         const scoreB = b.score !== undefined ? b.score : 0;
         

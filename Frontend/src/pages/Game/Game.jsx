@@ -5,74 +5,78 @@ import { Chat } from "../../features/Chat/Chat"
 import styles  from "./Game.module.css"
 import logo from '../../assets/logo.gif';
 import { ToolTip } from "../../features/ToolTip/ToolTip"
-import { useContext, useEffect, useState, useRef } from "react"
-import { UserContext } from "../../context/User/UserContext"
-import { SignalRContext } from "../../context/SignalR/SignalRContext"
-import { SessionContext } from "../../context/Session/SessionContext"
+import { useEffect, useRef, useState } from "react"
 import { WordPicker } from "../../components/WordPicker/WordPicker"
 import { WaitingArea } from "../../components/WaitingArea/WaitingArea"
 import { RoleSplash } from "../../components/RoleSplash/RoleSplash"
 import waitingStyles from "../../components/WaitingArea/WaitingArea.module.css"
+import { useSessionStore } from "../../hooks/useSessionStore"
+import { useRoundStore } from "../../hooks/useRoundStore"
+import { useWordStore } from "../../hooks/useWordStore"
+
+import { useSignalRStore } from "../../hooks/useSignalRStore"
 
 function Game(){
-    const {connection} = useContext(SignalRContext)
-    const {roomId, isHost} = useContext(UserContext)
-    const {
-        participants: players, 
-        setParticipants: setPlayers,
-        role, 
-        setRole,
-        wordOptions, 
-        setWordOptions,
-        isWordSelected, 
-        setIsWordSelected,
-        setCurrentWord,
-        setTurnEndTime,
-        setCurrentRound,
-        setTotalRounds
-    } = useContext(SessionContext)
-    const [isStarted, setIsStarted] = useState(false)
-    const [isStarting, setIsStarting] = useState(false)
-    const [showRoleSplash, setShowRoleSplash] = useState(false)
-    const splashTimerRef = useRef(null)
-    const baseRoomUrl = import.meta.env.VITE_GAME_URL
+    const connection = useSignalRStore((state) => state.connection)
+    const roomId = useSessionStore((state) => state.roomId);
+    const isHost = useSessionStore((state) => state.isHost);
+    const participants = useSessionStore((state) => state.participants);
+    const setParticipants = useSessionStore((state) => state.setParticipants);
+
+    const role = useRoundStore((state) => state.role);
+    const setRole = useRoundStore((state) => state.setRole);
+    const setCurrentRound = useRoundStore((state) => state.setCurrentRound);
+    const setTotalRounds = useRoundStore((state) => state.setTotalRounds);
+    const setTurnEndTime = useRoundStore((state) => state.setTurnEndTime);
+    const setIsTurnActive = useRoundStore((state) => state.setIsTurnActive);
+
+    const wordOptions = useWordStore((state) => state.wordOptions);
+    const setWordOptions = useWordStore((state) => state.setWordOptions);
+    const isWordSelected = useWordStore((state) => state.isWordSelected);
+    const setIsWordSelected = useWordStore((state) => state.setIsWordSelected);
+    const setCurrentWord = useWordStore((state) => state.setCurrentWord);
+
+    const isGameStarted = useSessionStore((state) => state.isGameStarted);
+    const setIsGameStarted = useSessionStore((state) => state.setIsGameStarted);
+    const showRoleSplash = useRoundStore((state) => state.showRoleSplash);
+    const setShowRoleSplash = useRoundStore((state) => state.setShowRoleSplash);
+    const [isStarting, setIsStarting] = useState(false);
     
-    const fetchPlayers = async () => {
-    try {
-        const response = await fetch(baseRoomUrl+ "api/"+ roomId, {
-            method: "GET"
-        });
-        if (response.ok) {
-            const data = await response.json();
-            setPlayers(data.participants ?? []);
-        }
-    } catch (error) {
-        console.error("Network error fetching players: " + error);
-    }
-    };
+    const splashTimerRef = useRef(null)
 
     useEffect(() => {
-        fetchPlayers();
+        const fetchInitialParticipants = async () => {
+            if (!roomId) return;
+            try {
+                const response = await fetch(`${import.meta.env.VITE_GAME_URL}api/${roomId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setParticipants(data.participants || []);
+                }
+            } catch (error) {
+                console.error("Failed to fetch initial participants:", error);
+            }
+        };
+        fetchInitialParticipants();
+
         connection.on("PlayerJoined", (newPlayer) => {
-            setPlayers((prev) => prev ? [...prev, newPlayer] : [newPlayer]);
+            setParticipants((prev) => prev ? [...prev, newPlayer] : [newPlayer]);
         });
         connection.on("PlayerDisconnected", (disconnectedId) => {
-            setPlayers((prev) => prev ? prev.filter(p => p.connectionId !== disconnectedId) : []);
+            setParticipants((prev) => prev ? prev.filter(p => p.connectionId !== disconnectedId) : []);
         });
         connection.on("GameStarted", () => {
-            setIsStarted(true);
+            setIsGameStarted(true);
         });
-
         connection.on("RoundStarted", (data) => {
             console.log("Round started:", data);
             setCurrentRound(data.currentRound);
             setTotalRounds(data.totalRounds);
         });
-
         connection.on("OnRoleAssigned", (roleAssignmentEvent) => handleRoleAssignment(roleAssignmentEvent));
-        
         connection.on("OnTurnStarted", (turnStartedEvent) => {
             console.log("Turn started payload:", turnStartedEvent);
+            setIsTurnActive(true);
             setCurrentWord(turnStartedEvent.word);
             setTurnEndTime(turnStartedEvent.turnEndTime);
             setCurrentRound(turnStartedEvent.currentRound);
@@ -82,13 +86,15 @@ function Game(){
 
         connection.on("OnTurnEnded", (data) => {
             console.log("Turn ended. Word was:", data.word);
+            setIsTurnActive(true);
             setCurrentWord(data.word);
             setTurnEndTime(null);
         });
 
         connection.on("GameEnded", (data) => {
             console.log("Game ended. Winner:", data.winner);
-            setIsStarted(false);
+            setIsTurnActive(false);
+            setIsGameStarted(false);
             setIsWordSelected(false);
             setRole(null);
             setCurrentWord("");
@@ -96,7 +102,7 @@ function Game(){
         });
 
         connection.on("UpdatePlayers", (updatedPlayers) => {
-            setPlayers(updatedPlayers);
+            setParticipants(updatedPlayers);
         });
 
         return () => {
@@ -156,9 +162,9 @@ function Game(){
                 <GameStatusBar />
             </header>
             <main data-component="main" className={styles.main}>
-                <PlayerList players={players}></PlayerList>
+                <PlayerList participants={participants}></PlayerList>
                 <div data-component="game-draw" className={styles.draw}>
-                    {isStarted ? (
+                    {isGameStarted ? (
                         showRoleSplash ? 
                         (
                             <RoleSplash role={role} />

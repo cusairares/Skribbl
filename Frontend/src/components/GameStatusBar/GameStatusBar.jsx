@@ -1,12 +1,24 @@
-import { useContext, useState, useEffect } from "react"
-import { SessionContext } from "../../context/Session/SessionContext"
+import { useState, useEffect } from "react"
 import styles from "./GameStatusBar.module.css"
 import clockIcon from "../../assets/clock.gif"
 import settingsIcon from "../../assets/settings.gif"
+import { useRoundStore } from "../../hooks/useRoundStore"
+import { useWordStore } from "../../hooks/useWordStore"
 
 function GameStatusBar() {
-    const { currentWord, currentRound, totalRounds, turnEndTime } = useContext(SessionContext)
+    const currentWord = useWordStore((state) => state.currentWord)
+    const currentRound = useRoundStore((state) => state.currentRound)
+    const totalRounds = useRoundStore((state) => state.totalRounds)
+    const turnEndTime = useRoundStore((state) => state.turnEndTime)
+    
     const [secondsLeft, setSecondsLeft] = useState(0)
+    
+    const updateTimer = (endTime) => {
+        const now = Date.now()
+        const diff = endTime - now
+        const remaining = Math.max(0, Math.ceil(diff / 1000))
+        setSecondsLeft(remaining)
+    };
 
     useEffect(() => {
         if (!turnEndTime) {
@@ -16,14 +28,7 @@ function GameStatusBar() {
 
         const endTime = new Date(turnEndTime).getTime()
 
-        const updateTimer = () => {
-            const now = Date.now()
-            const diff = endTime - now
-            const remaining = Math.max(0, Math.ceil(diff / 1000))
-            setSecondsLeft(remaining)
-        };
-
-        updateTimer()
+        updateTimer(endTime)
 
         const intervalId = setInterval(updateTimer, 200)
 

@@ -1,14 +1,14 @@
-import React, { useState, useRef ,useEffect, useContext} from 'react';
+import React, { useState, useRef ,useEffect} from 'react';
 import { Stage, Layer, Line } from 'react-konva';
-import { SignalRContext } from "../../context/SignalR/SignalRContext";
-import { UserContext } from '../../context/User/UserContext';
+import { useSessionStore } from '../../hooks/useSessionStore';
+import { useSignalRStore } from '../../hooks/useSignalRStore';
 
 function Canvas({ isDrawer }) {
   const [lines, setLines] = useState([]);
   const isDrawing = useRef(false); 
 
-  const {connection} = useContext(SignalRContext)
-  const {roomId} = useContext(UserContext)
+  const connection = useSignalRStore((state) => state.connection)
+  const roomId = useSessionStore((state) => state.roomId)
   const lastSentTime = useRef(0);
 
   const containerRef = useRef(null);
