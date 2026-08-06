@@ -19,7 +19,7 @@ namespace Skribbl.Interfaces
         /// <param name="roomId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        bool JoinRoom(string roomId, JoinRoomRequest request);
+        Task<bool> JoinRoom(string roomId, JoinRoomRequest request);
 
         string? LeaveRoom(string connectionId);
 
@@ -45,10 +45,10 @@ namespace Skribbl.Interfaces
         void AddWords(string[] words);
 
         void AddCanvasUpdate(CanvasUpdate update);
-
-        List<Participant> FetchParticipants(string roomId);
-
         List<CanvasUpdate> FetchCanvasUpdates(string roomId);
+
+        List<Participant> FetchParticipants(string roomId, string? sort = "score_desc");
+
         Task<bool> StartMatchmakingGame(string connectionId);
         Task<bool> CommitSelectedWord(string connectionId, string word);
         Task<ChatMessageEvent?> TryGuess(ChatMessageRequest request);

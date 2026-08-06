@@ -35,13 +35,18 @@ namespace Skribbl.Services
             return Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
         }
 
-        public List<Participant> FetchParticipants(string roomId)
+        public List<Participant> FetchParticipants(string roomId, string? sort = "score_desc")
         { 
-            var participants = _registryManager.FetchParticipants(roomId);
+            var participants = _registryManager.FetchParticipants(roomId, sort);
 
-            return participants;
+            if (string.Equals(sort, "score_asc", StringComparison.OrdinalIgnoreCase))
+            {
+                return participants.OrderBy(p => p.Score).ToList();
+            }
+
+            return participants.OrderByDescending(p => p.Score).ToList();
         }
-        public bool JoinRoom(string roomId, JoinRoomRequest request)
+        public async Task<bool> JoinRoom(string roomId, JoinRoomRequest request)
         {
             var room = _registryManager.GetRoomByRoomId(roomId);
             if (room == null)
@@ -57,6 +62,33 @@ namespace Skribbl.Services
             }
             var participant = new Participant { Username = request.Username, ConnectionId = request.ConnectionId, Score = 0, AvatarOptions = request.AvatarOptions };
             _registryManager.AddParticipantToRoom(roomId, participant);
+
+            await _hubContext.Clients.Client(request.ConnectionId).SendAsync("UpdatePlayers", room.Participants);
+
+            //late joiners logic
+            if (room.IsStarted)
+            {
+                await _hubContext.Clients.Client(request.ConnectionId).SendAsync("GameStarted");
+                await _hubContext.Clients.Client(request.ConnectionId).SendAsync("RoundStarted", new { CurrentRound = room.CurrentRound, TotalRounds = room.TotalRounds });
+
+                await _hubContext.Clients.Client(request.ConnectionId).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Guesser", WordList = null });
+
+                if (room.IsTurnActive && room.CurrentWord != null && room.TurnEndTime.HasValue)
+                {
+                    var maskedWord = string.Join(" ", room.CurrentWord.Select(c => c == ' ' ? " " : "_"));
+
+                    var turnStartedPayload = new
+                    {
+                        Word = maskedWord,
+                        TurnEndTime = room.TurnEndTime.Value,
+                        CurrentRound = room.CurrentRound,
+                        TotalRounds = room.TotalRounds
+                    };
+
+                    await _hubContext.Clients.Client(request.ConnectionId).SendAsync("OnTurnStarted", turnStartedPayload);
+                    await _hubContext.Clients.Client(request.ConnectionId).SendAsync("CanvasUpdate", _registryManager.FetchCanvasUpdates(roomId));
+                }
+            }
             return true;
 
         }
@@ -175,10 +207,14 @@ namespace Skribbl.Services
             var actualWord = room.CurrentWord;
             room.CurrentWord = null;
             room.TurnEndTime = null;
+            lock (room.CanvasUpdates)
+            {
+                room.CanvasUpdates.Clear();
+            }
 
             await _hubContext.Clients.Group(roomId).SendAsync("OnTurnEnded", new { Word = actualWord });
 
-            await Task.Delay(5000);
+            await Task.Delay(2000);
 
             await ProgressGame(roomId);
         }
@@ -192,6 +228,8 @@ namespace Skribbl.Services
             if (nextDrawerConnectionId != null)
             {
                 var words = GenerateWords(roomId);
+
+                await _hubContext.Clients.Group(roomId).SendAsync("RoundStarted", new { CurrentRound = room.CurrentRound, TotalRounds = room.TotalRounds });
                 await _hubContext.Clients.Client(nextDrawerConnectionId).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Drawer", WordList = words });
                 await _hubContext.Clients.GroupExcept(roomId, new[] { nextDrawerConnectionId }).SendAsync("OnRoleAssigned", new RoleAssignmentEvent { Role = "Guesser", WordList = null });
             }
@@ -215,6 +253,12 @@ namespace Skribbl.Services
                             maxScore = p.Score;
                             winner = p;
                         }
+                    }
+
+                    // Reset all scores to 0 so the next game starts fresh
+                    foreach (var p in room.Participants)
+                    {
+                        p.Score = 0;
                     }
 
                     await _hubContext.Clients.Group(roomId).SendAsync("GameEnded", new { Winner = winner });
@@ -265,15 +309,14 @@ namespace Skribbl.Services
         {
             throw new NotImplementedException();
         }
+        public void AddCanvasUpdate(CanvasUpdate canvasUpdate)
+        {
+            _registryManager.AddCanvasUpdate(canvasUpdate);
+        }
 
         public List<CanvasUpdate> FetchCanvasUpdates(string roomId)
         {
             return _registryManager.FetchCanvasUpdates(roomId);
-        }
-
-        public void AddCanvasUpdate(CanvasUpdate canvasUpdate)
-        {
-            _registryManager.AddCanvasUpdate(canvasUpdate);
         }
 
         public async Task<ChatMessageEvent?> TryGuess(ChatMessageRequest request)

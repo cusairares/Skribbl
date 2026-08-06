@@ -20,7 +20,7 @@ namespace Skribbl.Repositories
         public SessionRegistry()
         {
             _random = new Random();
-            _activeSessions = new ConcurrentDictionary<string, SessionState>();
+            _activeSessions = new ConcurrentDictionary<string, SessionState>(StringComparer.OrdinalIgnoreCase);
         }
 
         public void AddRoom(SessionState sessionState)
@@ -55,15 +55,25 @@ namespace Skribbl.Repositories
             return null;
         }
 
-        public List<Participant> FetchParticipants(string roomId)
+        public List<Participant> FetchParticipants(string roomId, string? sort = null)
         {
-            if(_activeSessions.TryGetValue(roomId, out var room)){
-                return room.Participants;
-            }
-            else
+            if (_activeSessions.TryGetValue(roomId, out var room))
             {
-                return new List<Participant>();
+                lock (room.Participants)
+                {
+                    IEnumerable<Participant> query = room.Participants.ToList();
+                    if (string.Equals(sort, "score_asc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy(p => p.Score);
+                    }
+                    else if (string.Equals(sort, "score_desc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderByDescending(p => p.Score);
+                    }
+                    return query.ToList();
+                }
             }
+            return new List<Participant>();
         }
 
         public List<string> FetchWords(string roomId)
