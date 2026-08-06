@@ -6,7 +6,7 @@ import { useSignalRStore } from "./useSignalRStore";
 
 export const useLobby = ()=> 
 {
-    const baseRoomUrl = `${import.meta.env.VITE_GAME_URL}api/rooms`
+    const baseRoomUrl = `${import.meta.env.VITE_GAME_URL}api/v1/rooms`
 
     const username = useSessionStore((state) => state.username);
     const roomId = useSessionStore((state) => state.roomId)
@@ -29,7 +29,7 @@ export const useLobby = ()=>
         setIsCreating(true)
 
         try{
-            const createRequest= await fetch(baseRoomUrl + '/create', { 
+            const createRequest= await fetch(baseRoomUrl, { 
                 method: 'POST' 
             });
 
@@ -64,11 +64,14 @@ export const useLobby = ()=>
         setIsJoining(false)
     }
 
-    const toggleDialog = () =>{
-        setIsDialog(prevState =>
-            !prevState
-        )
-    }
+    const toggleDialog = () => {
+        setIsDialog((prevState) => {
+            if (prevState) {
+                updateRoomId("");
+            }
+            return !prevState;
+        });
+    };
 
     return{
         handleCreateRoom,

@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
+import { useSessionStore } from "./useSessionStore";
 
-const BASE_ROOM_URL = `${import.meta.env.VITE_GAME_URL}api/rooms`;
+const BASE_ROOM_URL = `${import.meta.env.VITE_GAME_URL}api/v1/rooms`;
 
 export const useSignalRStore = create((set, get) => ({
   connection: null,
@@ -34,6 +35,7 @@ export const useSignalRStore = create((set, get) => ({
   joinRoom: async (targetRoomId, joinRoomRequest, navigate) => {
     if (!targetRoomId?.trim()) return;
 
+    const cleanRoomId = targetRoomId.trim().toUpperCase();
     const { username: targetUsername, avatarOptions } = joinRoomRequest;
 
     try {
@@ -41,19 +43,19 @@ export const useSignalRStore = create((set, get) => ({
 
       // Invoke SignalR hub method
       await connection.invoke("JoinSignalRGroup", {
-        RoomId: targetRoomId,
+        RoomId: cleanRoomId,
         Username: targetUsername,
         AvatarOptions: avatarOptions,
       });
 
       // API request to join room
       const joinRoomRequestBody = {
-        Username: targetUsername.trim(),
+        Username: targetUsername ? targetUsername.trim() : "",
         ConnectionId: connection.connectionId,
         AvatarOptions: avatarOptions,
       };
 
-      const response = await fetch(`${BASE_ROOM_URL}/join/${targetRoomId}`, {
+      const response = await fetch(`${BASE_ROOM_URL}/${cleanRoomId}/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(joinRoomRequestBody),
@@ -61,24 +63,38 @@ export const useSignalRStore = create((set, get) => ({
 
       if (response.ok) {
         console.log(
-          `Player ${targetUsername.trim()} successfully joined room: ${targetRoomId} (ConnectionId: ${connection.connectionId})`
+          `Player ${targetUsername ? targetUsername.trim() : ""} successfully joined room: ${cleanRoomId} (ConnectionId: ${connection.connectionId})`
         );
         if (navigate) {
-          navigate(`/game/${targetRoomId}`);
+          navigate(`/game/${cleanRoomId}`);
         }
       } else {
         console.error("Failed to join room via API");
+        await get().disconnect();
+        useSessionStore.getState().reset();
       }
     } catch (error) {
       console.error("Network or SignalR error during joinRoom:", error);
+      await get().disconnect();
+      useSessionStore.getState().reset();
     }
   },
 
   disconnect: async () => {
-    const { connection } = get();
-    if (connection) {
-      await connection.stop();
-      set({ connection: null });
+    const targetConnection = get().connection;
+    if (targetConnection) {
+      if (get().connection === targetConnection) {
+        set({ connection: null });
+      }
+      try {
+        await targetConnection.stop();
+      } catch (error) {
+        console.error("Error stopping SignalR connection:", error);
+      } finally {
+        if (get().connection === targetConnection) {
+          set({ connection: null });
+        }
+      }
     }
   },
 }));

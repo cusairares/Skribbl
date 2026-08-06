@@ -7,11 +7,19 @@ export const useSessionStore = create((set) => ({
     participants: [],
     isGameStarted: false,
 
-    updateRoomId: (roomId) => set({ roomId }),
+    updateRoomId: (roomId) => set({ roomId: roomId ? roomId.toUpperCase() : "" }),
     updateHost: (isHost) => set({ isHost }),
     updateUsername: (username) => set({ username }),
     setIsGameStarted: (isGameStarted) => set({ isGameStarted }),
     setParticipants: (participantsOrFn) => set((state) => ({
         participants: typeof participantsOrFn === 'function' ? participantsOrFn(state.participants) : participantsOrFn
     })),
+    reset: () => set({
+        roomId: "",
+        isHost: false,
+        username: "",
+        participants: [],
+        isGameStarted: false,
+    }),
 }));
+

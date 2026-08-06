@@ -23,7 +23,10 @@ function RoomCodeDialog({ toggleDialog, handleJoinRoom, isJoining }){
             </button>
             <button className={styles.backButton} 
                 disabled={isJoining}
-                onClick={toggleDialog}
+                onClick={() => {
+                    updateRoomId("");
+                    toggleDialog();
+                }}
             >
                 Back
             </button>
