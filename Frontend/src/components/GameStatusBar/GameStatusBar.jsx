@@ -13,12 +13,6 @@ function GameStatusBar() {
     
     const [secondsLeft, setSecondsLeft] = useState(0)
     
-    const updateTimer = (endTime) => {
-        const now = Date.now()
-        const diff = endTime - now
-        const remaining = Math.max(0, Math.ceil(diff / 1000))
-        setSecondsLeft(remaining)
-    };
 
     useEffect(() => {
         if (!turnEndTime) {
@@ -28,20 +22,31 @@ function GameStatusBar() {
 
         const endTime = new Date(turnEndTime).getTime()
 
-        updateTimer(endTime)
+        const getRemaining = () => Math.max(0, Math.ceil((endTime - Date.now()) / 1000))
 
-        const intervalId = setInterval(updateTimer, 200)
+        setSecondsLeft(getRemaining())
+
+        const intervalId = setInterval(() => {
+            const remaining = getRemaining()
+            setSecondsLeft(remaining)
+            if (remaining <= 0) {
+                clearInterval(intervalId)
+            }
+        }, 200)
 
         return () => {
             clearInterval(intervalId)
         }
     }, [turnEndTime])
 
+
     return (
         <div data-component="game-status-bar" className={styles.gameStatusBar}>
             <div className={styles.timerSection}>
-                <img src={clockIcon} className={styles.clock} alt="Clock timer" />
-                {secondsLeft > 0 && <span className={styles.timerText}>{secondsLeft}s</span>}
+                <div className={styles.clockWrapper}>
+                    <img src={clockIcon} className={styles.clock} alt="Clock timer" />
+                    {secondsLeft > 0 && <span className={styles.timerText}>{secondsLeft}</span>}
+                </div>
             </div>
             <div className={styles.rounds}>{"Round " + currentRound + " of " + totalRounds}</div>
             <div data-component="word" className={styles.word}>

@@ -6,4 +6,8 @@ export const useChatStore = create((set) => ({
     setChatMessages: (messagesOrFn) => set((state) => ({
         chatMessages: typeof messagesOrFn === 'function' ? messagesOrFn(state.chatMessages) : messagesOrFn
     })),
+    reset: () => set({
+        chatMessages: [],
+    }),
 }));
+

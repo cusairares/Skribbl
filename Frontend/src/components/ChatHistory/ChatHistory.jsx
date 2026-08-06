@@ -6,8 +6,10 @@ function ChatMessage({ message }) {
 
     if (isCorrect) {
         return (
-            <div className={styles.messageRow} style={{ color: "#2e7d32", fontWeight: "bold" }}>
-                <span className={styles.messageText}>{message.message}</span>
+            <div className={styles.messageRow}>
+                <span className={styles.messageText} style={{ color: "#2e7d32", fontWeight: "bold" }}>
+                    {message.message}
+                </span>
             </div>
         );
     }

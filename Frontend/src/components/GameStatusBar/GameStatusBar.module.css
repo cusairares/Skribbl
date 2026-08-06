@@ -10,7 +10,7 @@
 
 .clock{
     height: 100%;
-    padding-left: 10px;
+    display: block;
 }
 .rounds{
     margin-right: auto;
@@ -27,15 +27,27 @@
 .timerSection {
     display: flex;
     align-items: center;
-    gap: 8px;
     height: 100%;
+    padding-left: 10px;
+}
+
+.clockWrapper {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .timerText {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 700;
-    font-size: 1.1rem;
-    color: #e53935; /* Premium red accent for alert/time countdown */
+    font-size: 0.85rem;
+    color: #000;
     font-family: inherit;
-    min-width: 32px;
+    pointer-events: none;
 }
 

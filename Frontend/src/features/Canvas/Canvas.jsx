@@ -1,18 +1,28 @@
 import React, { useState, useRef ,useEffect} from 'react';
 import { Stage, Layer, Line } from 'react-konva';
-import { useSessionStore } from '../../hooks/useSessionStore';
+
+import { useRoundStore } from '../../hooks/useRoundStore';
 import { useSignalRStore } from '../../hooks/useSignalRStore';
+import { useSessionStore } from '../../hooks/useSessionStore';
 
 function Canvas({ isDrawer }) {
   const [lines, setLines] = useState([]);
   const isDrawing = useRef(false); 
-
   const connection = useSignalRStore((state) => state.connection)
   const roomId = useSessionStore((state) => state.roomId)
   const lastSentTime = useRef(0);
-
   const containerRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const clearCanvas = useRoundStore((state) => state.clearCanvas)
+  const setClearCanvas = useRoundStore((state) => state.setClearCanvas)
+
+  useEffect(() => {
+    if (clearCanvas) {
+      setLines([]);
+      setClearCanvas(false);
+    }
+  }, [clearCanvas]);
+
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -93,7 +103,7 @@ function Canvas({ isDrawer }) {
 
   const fetchCanvas  = async () => {
       try{
-        const response = await fetch(`${baseRoomUrl}api/${roomId}/fetch_canvas`,{
+        const response = await fetch(`${baseRoomUrl}api/v1/rooms/${roomId}/canvas`,{
           method:"GET"
         });
         if(response.ok){

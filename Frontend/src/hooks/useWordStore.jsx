@@ -8,4 +8,10 @@ export const useWordStore = create((set) => ({
     setCurrentWord: (currentWord) => set({ currentWord }),
     setWordOptions: (wordOptions) => set({ wordOptions }),
     setIsWordSelected: (isWordSelected) => set({ isWordSelected }),
+    reset: () => set({
+        currentWord: "",
+        wordOptions: [],
+        isWordSelected: false,
+    }),
 }));
+
